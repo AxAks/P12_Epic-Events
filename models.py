@@ -6,60 +6,78 @@ draft :
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import ForeignKey
 from django.utils.translation import gettext_lazy as _
 
 
-class CustomUser(AbstractUser):
+class DatedItem(models.Model):
+    date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
+    date_updated = models.DateTimeField(_('update date'))  # nullable ?
+
+    class Meta:
+        abstract = True
+
+
+class Person(models.Model):
+    first_name = models.CharField(_('first name'), max_length=150)
+    last_name = models.CharField(_('last name'), max_length=150)
+    email = models.EmailField(_('email address'))
+    phone = models.CharField(_('phone number'), max_length=15)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f'{self.last_name}, {self.first_name}'
+
+
+class Employee(AbstractUser, Person):
     """
     Extends the Basic User class adding some attributes
     """
-    first_name = models.CharField(_('first name'), max_length=150)
-    last_name = models.CharField(_('last name'), max_length=150)
-    email = models.EmailField(_('email address'))
-    phone = models.IntegerField(_('phone number')) # pas integer, voir si formal tel existe
-    profile = models.CharField(_('profile', choices=['Manager', 'Salesperson', 'Assignee'])) # Enum !! voir bon settings
-    date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'))
-
-    def __str__(self):
-        return f'{self.last_name}, {self.first_name}'
+    pass
+    # gerer les profils voir django groups !
 
 
-class Contact:
-    first_name = models.CharField(_('first name'), max_length=150)
-    last_name = models.CharField(_('last name'), max_length=150)
-    email = models.EmailField(_('email address'))
-    phone = models.IntegerField(_('phone number')) # pas integer, voir si formal tel existe
-    mobile = models.IntegerField(_('mobile phone number')) # pas integer, voir si formal tel existe
-    company_name = models.CharField(_('company name'))
-    is_client = models.BooleanField(_('is the contact already a client'))
-    date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'))
-
-    def __str__(self):
-        return f'{self.last_name}, {self.first_name}'
+class Client(Person):
+    company_name = models.CharField(_('company name'), max_length=50)
+    mobile = models.CharField(_('mobile phone number'), max_length=15)
 
 
-class Contract:
-    client = models.ForeignKey(to=Contact, related_name='related_client',
-                               on_delete=models.CASCADE) # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    salesperson = models.ForeignKey(to=CustomUser, related_name='related_salesperson',
-                                    on_delete=models.CASCADE) # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    status = models.CharField(_('contract status', choices=['created', 'ongoing', 'signed'])) # Enum !! voir bon settings ( passer la liste en constante ?
-    attribution_date = models.DateField(_('attribution date'))
-    signature_date = models.DateField(_('signature date'))
-    date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'))
+class Contract(models.Model):
+    client = models.ForeignKey(to=Client, related_name='related_client',
+                               on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    sales_person = models.ForeignKey(to=Employee, related_name='related_sales_person',
+                                     on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    signature_date = models.DateField(_('signature date'), null=True, default=None)  #  à verifier ! # sert à rien ! -t> assignation sales employee
 
 
-class Event:
+class Event(models.Model):
     contract = models.ForeignKey(to=Contract, related_name='retated_contract',
-                                 on_delete=models.CASCADE) # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    representative = models.ForeignKey(to=CustomUser, related_name='assignee',
-                                       on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    status = models.CharField(_('event status', choices=['created', 'ongoing', 'terminated']))  #  Enum !! voir bon settings
-    attribution_date = models.DateField(_('attribution date'))  # date ou datetime à voir + auto
+                                 on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    status = models.CharField(
+        _('event status', choices=['created', 'ongoing', 'terminated']))  #  Enum !! voir bon settings
     dates = models.DateField(_('event dates'))
-    date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'))
 
+
+class Assignation(models.Model, DatedItem):
+    employee = ForeignKey(to=Employee, related_name='related_employee',
+                          on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class ClientAssignation(Assignation):
+    client = ForeignKey(to=Client, related_name='related_client',
+                        on_delete=models.CASCADE)
+
+
+class ContractAssignation(Assignation):
+    contract = ForeignKey(to=Contract, related_name='related_contract',
+                          on_delete=models.CASCADE)
+
+
+class EventAssignation(Assignation):
+    event = ForeignKey(to=Event, related_name='related_event',
+                       on_delete=models.CASCADE)
