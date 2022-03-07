@@ -6,8 +6,9 @@ draft :
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import ForeignKey
 from django.utils.translation import gettext_lazy as _
+
+from constants import STATUSES
 
 
 class DatedItem(models.Model):
@@ -48,42 +49,35 @@ class Contract(DatedItem):
                                on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     sales_person = models.ForeignKey(to=Employee, related_name='related_sales_person',
                                      on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    signature_date = models.DateField(_('signature date'), null=True, default=None)  #  à verifier ! # sert à rien ! -t> assignation sales employee
 
 
 class Event(DatedItem):
     contract = models.ForeignKey(to=Contract, related_name='related_contract',
                                  on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     status = models.CharField(
-        _('event status', choices=['created', 'ongoing', 'terminated']))  #  Enum !! voir bon settings
+        _('event status', choices=STATUSES))  #  Enum !! voir bon settings
     begin_date = models.DateField(_('begin date'))
     end_date = models.DateField(_('end date'))
 
 
 class Assignment(DatedItem):
-    employee = ForeignKey(to=Employee, related_name='related_employee',
-                          on_delete=models.CASCADE)
+    employee = models.ForeignKey(to=Employee, related_name='related_employee',
+                                 on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
 
 
 class ClientAssignment(Assignment):
-    employee = ForeignKey(to=Employee, related_name='related_employee',
-                          on_delete=models.CASCADE)
-    client = ForeignKey(to=Client, related_name='related_client',
-                        on_delete=models.CASCADE)
+    client = models.ForeignKey(to=Client, related_name='related_client',
+                               on_delete=models.CASCADE)
 
 
 class ContractAssignment(Assignment):
-    employee = ForeignKey(to=Employee, related_name='related_employee',
-                          on_delete=models.CASCADE)
-    contract = ForeignKey(to=Contract, related_name='related_contract',
-                          on_delete=models.CASCADE)
+    contract = models.ForeignKey(to=Contract, related_name='related_contract',
+                                 on_delete=models.CASCADE)
 
 
 class EventAssignment(Assignment):
-    employee = ForeignKey(to=Employee, related_name='related_employee',
-                          on_delete=models.CASCADE)
-    event = ForeignKey(to=Event, related_name='related_event',
-                       on_delete=models.CASCADE)
+    event = models.ForeignKey(to=Event, related_name='related_event',
+                              on_delete=models.CASCADE)
