@@ -39,11 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'users',
+    'contracts',
+    'events'
 ]
-
-
-
-
 
 LOGGING = {
     'version': 1,
@@ -88,7 +87,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'epic_events.urls'
+ROOT_URLCONF = 'EpicEvents.urls'
 
 TEMPLATES = [
     {
@@ -106,7 +105,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'epic_events.wsgi.application'
+WSGI_APPLICATION = 'EpicEvents.wsgi.application'
 
 
 # Database
@@ -124,7 +123,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'models.Employee'
+AUTH_USER_MODEL = 'users.Employee'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
