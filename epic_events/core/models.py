@@ -31,3 +31,7 @@ class Employee(AbstractUser, Person):
     """
     Extends the Basic User class adding some attributes
     """
+
+    class Meta:
+        verbose_name = _('employee')
+        verbose_name_plural = _('employees')
