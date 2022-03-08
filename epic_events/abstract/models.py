@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 class DatedItem(models.Model):
     date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'))
+    date_updated = models.DateTimeField(_('update date'), null=True)
 
     class Meta:
         abstract = True

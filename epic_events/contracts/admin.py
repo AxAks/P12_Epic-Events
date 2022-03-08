@@ -1,3 +1,6 @@
 from django.contrib import admin
+from contracts.models import Contract, ClientAssignment, ContractAssignment
 
-# Register your models here.
+admin.site.register(Contract)
+admin.site.register(ClientAssignment)
+admin.site.register(ContractAssignment)

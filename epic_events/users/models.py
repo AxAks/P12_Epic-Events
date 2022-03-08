@@ -10,8 +10,7 @@ class Employee(AbstractUser, Person):
 
 
 class Assignment(DatedItem):
-    employee = models.ForeignKey(to=Employee, related_name='related_employee',
-                                 on_delete=models.CASCADE)
+    employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
