@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
 
@@ -24,3 +25,9 @@ class Person(DatedItem):
 
     def __str__(self):
         return f'{self.last_name}, {self.first_name}'
+
+
+class Employee(AbstractUser, Person):
+    """
+    Extends the Basic User class adding some attributes
+    """

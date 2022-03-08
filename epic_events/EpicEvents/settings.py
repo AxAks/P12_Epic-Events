@@ -39,10 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'abstract',
-    'users',
-    'contracts',
-    'events'
+    'core',
+    'api'
 ]
 
 LOGGING = {
@@ -124,7 +122,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'users.Employee'
+AUTH_USER_MODEL = 'core.Employee'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

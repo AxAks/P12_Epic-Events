@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from abstract.models import Person, DatedItem
-from users.models import Employee, Assignment
+
+from core.models import DatedItem, Employee, Person
+
+from constants import STATUSES
 
 
 class Client(Person):
@@ -16,11 +18,31 @@ class Contract(DatedItem):
                                      on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
 
 
-class ClientAssignment(Assignment):  # pourquoi ? // ContractAssignment, difference?
+class Event(DatedItem):
+    contract = models.ForeignKey(to=Contract, related_name='event_contract',
+                                 on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    status = models.CharField(max_length=10, choices=STATUSES)
+    begin_date = models.DateField(_('begin date'))
+    end_date = models.DateField(_('end date'))
+
+
+class Assignment(DatedItem):
+    employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+
+class ClientAssignment(Assignment):  # pourquoi ? // ContractAssignment, difference?
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
 
-class ContractAssignment(Assignment):  # pourquoi ? // ClientAssignment, difference?
+class ContractAssignment(Assignment):  # pourquoi ? // ClientAssignment, difference?
     contract = models.ForeignKey(to=Contract, related_name='assigned_contract',
                                  on_delete=models.CASCADE)
+
+
+class EventAssignment(Assignment):
+    event = models.ForeignKey(to=Event, related_name='assigned_event',
+                              on_delete=models.CASCADE)
