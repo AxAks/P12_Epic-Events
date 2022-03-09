@@ -1,3 +1,6 @@
+# Environment variables file
+environment_variables.py
+
 # IDE Pycharm
 .idea/
 
