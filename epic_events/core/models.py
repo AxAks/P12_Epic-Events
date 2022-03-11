@@ -15,6 +15,9 @@ class DatedItem(models.Model):
 
 
 class Person(DatedItem):
+    """
+
+    """
     first_name = models.CharField(_('first name'), max_length=150)
     last_name = models.CharField(_('last name'), max_length=150)
     email = models.EmailField(_('email address'))
@@ -30,8 +33,12 @@ class Person(DatedItem):
 class Employee(AbstractUser, Person):
     """
     Extends the Basic User class adding some attributes
+    the User is renamed "Employee"
     """
 
     class Meta:
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
+
+    def __str__(self):
+        return f'{self.last_name}, {self.first_name}'
