@@ -1,5 +1,5 @@
-from django.urls import path, re_path
-from rest_framework_jwt.views import refresh_jwt_token
+from django.urls import path
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from core.views import AddEmployeeModelViewSet, AuthenticationAPIView
 
@@ -9,6 +9,6 @@ urlpatterns = [
     path('add_employee/', AddEmployeeModelViewSet.as_view({
         'post': 'create'
     })),
-    path('login/', AuthenticationAPIView.as_view()),
-    re_path('token_refresh/', refresh_jwt_token),
+    path('login/', TokenObtainPairView.as_view()),
+    path('token_refresh/', TokenRefreshView.as_view()),
 ]
