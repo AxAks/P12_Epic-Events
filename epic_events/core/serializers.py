@@ -13,7 +13,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'password2']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'phone', 'password', 'password2']
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self) -> Employee:
@@ -22,6 +22,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             first_name=self.validated_data['first_name'],
             last_name=self.validated_data['last_name'],
             email=self.validated_data['email'],
+            phone=self.validated_data['phone'],
         )
         password = self.validated_data['password']
         password2 = self.validated_data['password2']

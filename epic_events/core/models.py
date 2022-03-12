@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
@@ -40,5 +42,28 @@ class Employee(AbstractUser, Person):
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
 
+
+class Profile(models.Model):
+    MANAGER = 1
+    SALES = 2
+    SUPPORT = 3
+    USERS_ROLES = (
+        (MANAGER, 'Manager'),
+        (SALES, 'Sales'),
+        (SUPPORT, 'Support'),
+    )
+
+    employee = models.ForeignKey(to=Employee, related_name='employee_profile',
+                                 on_delete=models.CASCADE)
+    role = models.PositiveSmallIntegerField(_('role'), choices=USERS_ROLES,
+                                            null=True, blank=True)
+
     def __str__(self):
-        return f'{self.last_name}, {self.first_name}'
+        return f'{self.employee.last_name}, {self.employee.first_name}'
+
+
+@receiver(post_save, sender=Employee)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(employee=instance)
+    instance.profile.save()

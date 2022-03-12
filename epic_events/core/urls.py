@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from core.views import AddEmployeeModelViewSet, AuthenticationAPIView
+from core.views import AddEmployeeModelViewSet
 
 app_name = "core"
 
