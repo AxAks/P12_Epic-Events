@@ -12,6 +12,15 @@ class ProfileInline(admin.StackedInline):
 
 class CustomEmployeeAdmin(UserAdmin):
     inlines = (ProfileInline, )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("first_name", "last_name", "username", "email", "phone", "password1", "password2"),
+            },
+        ),
+    )
 
     def get_inline_instances(self, request, obj=None):
         if not obj:

@@ -2,13 +2,15 @@ import logging
 
 
 from rest_framework import serializers
-from core.models import Employee, Profile
+from core.models import Employee
 
 logger = logging.getLogger('django')
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Employee
+    """
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
 
     class Meta:
@@ -31,12 +33,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'password': 'Passwords must match'})
         employee.set_password(password)
         employee.save()
-        logger.info(f'New user registered : {employee.username}')
+        logger.info(f'New employee registered : {employee.username}')
         return employee
 
 
 class EmployeeLoginSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer enabling to log in to the api
+    """
     class Meta:
         model = Employee
         fields = ['username', 'password']

@@ -8,6 +8,9 @@ from constants import USERS_ROLES
 
 
 class DatedItem(models.Model):
+    """
+    Abstract parent Class for any dated object
+    """
     date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
     date_updated = models.DateTimeField(_('update date'), null=True)
 
@@ -20,12 +23,13 @@ class DatedItem(models.Model):
 
 class Person(DatedItem):
     """
-
+    Abstract parent class for any physical person representation:
+    Can be Employee or Client
     """
     first_name = models.CharField(_('first name'), max_length=150)
     last_name = models.CharField(_('last name'), max_length=150)
     email = models.EmailField(_('email address'))
-    phone = models.CharField(_('phone number'), max_length=15)
+    phone = models.CharField(_('phone number'), max_length=15, blank=True)
 
     class Meta:
         abstract = True
@@ -45,6 +49,9 @@ class Employee(AbstractUser, Person):
 
 
 class Profile(models.Model):
+    """
+
+    """
     employee = models.OneToOneField(to=Employee, related_name='profile',
                                     on_delete=models.CASCADE)
     role = models.PositiveSmallIntegerField(_('role'), choices=USERS_ROLES,
