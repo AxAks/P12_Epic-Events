@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
+from constants import USERS_ROLES
+
 
 class DatedItem(models.Model):
     date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
@@ -37,33 +39,23 @@ class Employee(AbstractUser, Person):
     Extends the Basic User class adding some attributes
     the User is renamed "Employee"
     """
-
     class Meta:
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
 
 
 class Profile(models.Model):
-    MANAGER = 1
-    SALES = 2
-    SUPPORT = 3
-    USERS_ROLES = (
-        (MANAGER, 'Manager'),
-        (SALES, 'Sales'),
-        (SUPPORT, 'Support'),
-    )
-
-    employee = models.ForeignKey(to=Employee, related_name='employee_profile',
-                                 on_delete=models.CASCADE)
+    employee = models.OneToOneField(to=Employee, related_name='profile',
+                                    on_delete=models.CASCADE)
     role = models.PositiveSmallIntegerField(_('role'), choices=USERS_ROLES,
-                                            null=True, blank=True)
+                                            default=3)
 
     def __str__(self):
-        return f'{self.employee.last_name}, {self.employee.first_name}'
+        return f'{USERS_ROLES[self.role - 1][1]}'
 
 
 @receiver(post_save, sender=Employee)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
+def create_or_update_employee_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(employee=instance)
     instance.profile.save()

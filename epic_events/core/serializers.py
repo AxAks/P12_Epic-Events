@@ -2,7 +2,7 @@ import logging
 
 
 from rest_framework import serializers
-from core.models import Employee
+from core.models import Employee, Profile
 
 logger = logging.getLogger('django')
 

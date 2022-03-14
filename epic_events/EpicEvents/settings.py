@@ -99,12 +99,12 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        'projects_app': {
+        'api_app': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True,
         },
-        'users_app': {
+        'core_app': {
             'handlers': ['file'],
             'level': 'INFO',
             'propagate': True,
