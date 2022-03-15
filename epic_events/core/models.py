@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import AbstractUser
@@ -48,21 +49,35 @@ class Employee(AbstractUser, Person):
         verbose_name_plural = _('employees')
 
 
-class Profile(models.Model):
-    """
+class Department(Group):
 
-    """
-    employee = models.OneToOneField(to=Employee, related_name='profile',
-                                    on_delete=models.CASCADE)
-    role = models.PositiveSmallIntegerField(_('role'), choices=USERS_ROLES,
-                                            default=3)
+    class Meta:
+        verbose_name = _("department")
+        verbose_name_plural = _("departments")
+
+
+class Affiliation(DatedItem):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE)
+    department = models.OneToOneField(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{USERS_ROLES[self.role - 1][1]}'
+        return f'{self.employee.first_name} is part of {self.department}'
 
-
-@receiver(post_save, sender=Employee)
-def create_or_update_employee_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(employee=instance)
-    instance.profile.save()
+# class Profile(models.Model):
+#     """
+#     Defines employees roles
+#     """
+#     employee = models.OneToOneField(to=Employee, related_name='profile',
+#                                     on_delete=models.CASCADE)
+#     role = models.PositiveSmallIntegerField(_('role'), choices=USERS_ROLES,
+#                                             default=3)
+#
+#     def __str__(self):
+#         return f'{USERS_ROLES[self.role - 1][1]}'
+#
+#
+# @receiver(post_save, sender=Employee)
+# def create_or_update_employee_profile(sender, instance, created, **kwargs):
+#     if created:
+#         Profile.objects.create(employee=instance)
+#     instance.profile.save()

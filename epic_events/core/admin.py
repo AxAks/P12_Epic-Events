@@ -1,23 +1,24 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
-from core.models import Employee, Profile
+from django.contrib.auth.admin import UserAdmin, GroupAdmin
+from django.contrib.auth.models import Group
+from core.models import Employee, Department, Affiliation
 
 
-class ProfileInline(admin.StackedInline):
-    model = Profile
+class AffiliationInline(admin.StackedInline):
+    model = Affiliation
     can_delete = False
-    verbose_name_plural = 'Profile'
+    verbose_name_plural = 'Affiliations'
     fk_name = 'employee'
 
 
 class CustomEmployeeAdmin(UserAdmin):
-    inlines = (ProfileInline, )
+    inlines = (AffiliationInline, )
     add_fieldsets = (
         (
             None,
             {
                 "classes": ("wide",),
-                "fields": ("first_name", "last_name", "username", "email", "phone", "password1", "password2"),
+                "fields": ("first_name", "last_name", "username", "email", "phone", "department", "password1", "password2"),
             },
         ),
     )
@@ -28,4 +29,12 @@ class CustomEmployeeAdmin(UserAdmin):
         return super(CustomEmployeeAdmin, self).get_inline_instances(request, obj)
 
 
+class DepartmentAdmin(GroupAdmin):
+    search_fields = ("name",)
+
+
+
 admin.site.register(Employee, CustomEmployeeAdmin)
+admin.site.unregister(Group)
+admin.site.register(Department, DepartmentAdmin)
+admin.site.register(Affiliation)
