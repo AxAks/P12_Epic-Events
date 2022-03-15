@@ -54,6 +54,8 @@ class Department(Group):
     class Meta:
         verbose_name = _("department")
         verbose_name_plural = _("departments")
+        proxy = True
+        app_label = 'auth'
 
 
 class Affiliation(DatedItem):

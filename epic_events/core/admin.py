@@ -33,7 +33,6 @@ class DepartmentAdmin(GroupAdmin):
     search_fields = ("name",)
 
 
-
 admin.site.register(Employee, CustomEmployeeAdmin)
 admin.site.unregister(Group)
 admin.site.register(Department, DepartmentAdmin)
