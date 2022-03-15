@@ -18,7 +18,7 @@ class CustomEmployeeAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("first_name", "last_name", "username", "email", "phone", "department", "password1", "password2"),
+                "fields": ("first_name", "last_name", "username", "email", "phone", "password1", "password2"),
             },
         ),
     )
@@ -33,6 +33,9 @@ class DepartmentAdmin(GroupAdmin):
     search_fields = ("name",)
 
 
+admin.site.site_title = "Epic Events"
+admin.site.site_header = "Epic Events Administration"
+admin.site.index_title = "Home"
 admin.site.register(Employee, CustomEmployeeAdmin)
 admin.site.unregister(Group)
 admin.site.register(Department, DepartmentAdmin)

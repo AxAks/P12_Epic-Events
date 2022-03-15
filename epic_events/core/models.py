@@ -44,6 +44,11 @@ class Employee(AbstractUser, Person):
     Extends the Basic User class adding some attributes
     the User is renamed "Employee"
     """
+    is_staff = models.BooleanField(
+        _("staff status"),
+        default=True,
+        help_text=_("Designates whether the user can log into this admin site."))
+
     class Meta:
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
