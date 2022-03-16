@@ -36,6 +36,8 @@ class DepartmentAdmin(GroupAdmin):
 admin.site.site_title = "Epic Events"
 admin.site.site_header = "Epic Events Administration"
 admin.site.index_title = "Home"
+
+
 admin.site.register(Employee, CustomEmployeeAdmin)
 admin.site.unregister(Group)
 admin.site.register(Department, DepartmentAdmin)
