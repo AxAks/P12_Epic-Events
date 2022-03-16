@@ -35,9 +35,6 @@ class Person(DatedItem):
     class Meta:
         abstract = True
 
-    def __str__(self):
-        return f'{self.last_name}, {self.first_name}'
-
 
 class Employee(AbstractUser, Person):
     """
@@ -49,12 +46,18 @@ class Employee(AbstractUser, Person):
         default=True,
         help_text=_("Designates whether the user can log into this admin site."))
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
     class Meta:
         verbose_name = _('employee')
         verbose_name_plural = _('employees')
 
 
 class Department(Group):
+
+    def __str__(self):
+        return f'{self.name}'
 
     class Meta:
         verbose_name = _("department")
@@ -68,7 +71,7 @@ class Affiliation(DatedItem):
     department = models.OneToOneField(Department, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.employee.first_name} is part of {self.department}'
+        return f'{self.employee} ({self.department})'
 
 # class Profile(models.Model):
 #     """

@@ -25,11 +25,11 @@ class Contract(DatedItem):
 class Event(DatedItem):
     contract = models.ForeignKey(to=Contract, related_name='event_contract',
                                  on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    status = models.CharField(max_length=10, choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
+    status = models.CharField(max_length=10, choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
-    attendees = models.IntegerField(_('attendees')) # mettre un default=0
-    notes = models.TextField(_('notes')) # mettre un default=''
+    attendees = models.IntegerField(_('attendees'), default=0)
+    notes = models.TextField(_('notes'))
 
 
 class Assignment(DatedItem):
