@@ -1,44 +1,32 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
 from django.contrib.auth.models import Group
-from core.models import Employee, Department, Affiliation
+from core.models import Employee, Department
 
 
-class AffiliationInline(admin.StackedInline):
-    model = Affiliation
-    can_delete = False
-    verbose_name_plural = 'Affiliations'
-    fk_name = 'employee'
-
-
+@admin.register(Employee)
 class CustomEmployeeAdmin(UserAdmin):
-    inlines = (AffiliationInline, )
     add_fieldsets = (
         (
             None,
             {
                 "classes": ("wide",),
-                "fields": ("first_name", "last_name", "username", "email", "phone", "password1", "password2"),
+                "fields": ("first_name", "last_name", "username",
+                           "groups", "email", "phone",
+                           "password1", "password2"),
             },
         ),
     )
 
-    def get_inline_instances(self, request, obj=None):
-        if not obj:
-            return list()
-        return super(CustomEmployeeAdmin, self).get_inline_instances(request, obj)
 
-
+@admin.register(Department)
 class DepartmentAdmin(GroupAdmin):
     search_fields = ("name",)
+    field_name = "department"
 
 
 admin.site.site_title = "Epic Events"
 admin.site.site_header = "Epic Events Administration"
 admin.site.index_title = "Home"
 
-
-admin.site.register(Employee, CustomEmployeeAdmin)
 admin.site.unregister(Group)
-admin.site.register(Department, DepartmentAdmin)
-admin.site.register(Affiliation)
