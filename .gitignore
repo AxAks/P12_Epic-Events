@@ -1,5 +1,6 @@
 # Environment variables file
-environment_variables.py
+epic_events/environment_variables.py
+
 
 # IDE Pycharm
 .idea/
