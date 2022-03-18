@@ -30,8 +30,8 @@ insofar as the followings are installed:
 
 
 [comment]: <> (à completer, et penser à faire un script epic_install.sh à la guigui pour lancer tout ca en une ligne !)
-[comment]: <> cd epic_events/
-[comment]: <> chmod +x ./epic_install.sh ?
+[comment]: <> git clone https://github.com/AxAks/P12_Epic-Events.git
+[comment]: <> cd P12_Epic-Events/
 [comment]: <> sh ./epic_install.sh
 
 
@@ -44,7 +44,8 @@ insofar as the followings are installed:
 
 Create and setup Postgresql database Manually via terminal:
 
-$ sudo su postgres       
+$ sudo su postgres     
+$ sudo service postgresql restart
 $ createdb epiceventsdb
 $ psql
 
@@ -52,4 +53,10 @@ postgres=# create user django with password 'djangepic';
 postgres=# grant all privileges on database epiceventsdb to django;        
 
 
-( python manage.py makemigrations)
+python manage.py makemigrations
+python manage.py migrate
+python manage.py loaddata core/fixture/departments_fixtures.json
+
+
+python manage.py runserver
+
