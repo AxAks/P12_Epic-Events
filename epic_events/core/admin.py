@@ -22,7 +22,6 @@ class CustomEmployeeAdmin(UserAdmin):
 @admin.register(Department)
 class DepartmentAdmin(GroupAdmin):
     search_fields = ("name",)
-    field_name = "department"
 
 
 admin.site.site_title = "Epic Events"

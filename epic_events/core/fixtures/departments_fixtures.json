@@ -4,7 +4,7 @@
       "name": "Management",
       "permissions": ""
     },
-    "model": "core.Department",
+    "model": "auth.group",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "name": "Sales",
       "permissions": ""
     },
-    "model": "core.Department",
+    "model": "auth.group",
     "pk": 2
   },
   {
@@ -20,7 +20,7 @@
       "name": "Support",
       "permissions": ""
     },
-    "model": "core.Department",
+    "model": "auth.group",
     "pk": 3
   }
 ]

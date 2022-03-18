@@ -58,8 +58,8 @@ class Employee(AbstractUser, Person):
                                         "The department this user belongs to. An Employee will get all permissions "
                                         "granted to  their department."
                                     ),
-                                    related_name="user_set",
-                                    related_query_name="user",
+                                    related_name="user_department",
+                                    related_query_name="employee",
                                     )
 
     def __str__(self):
