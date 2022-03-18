@@ -34,6 +34,12 @@ insofar as the followings are installed:
 [comment]: <> cd P12_Epic-Events/
 [comment]: <> sh ./epic_install.sh
 
+[comment]: <> Create SuperUser
+[comment]: <> source venv/bin/activate
+[comment]: <> cd epic_events
+[comment]: <> python manage.py createsuperuser
+
+
 In case the script does not work:
 
 git clone https://github.com/AxAks/P12_Epic-Events.git
