@@ -1,5 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
-from django.db.models import FloatField
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from core.models import DatedItem, Employee, Person
@@ -11,6 +13,9 @@ class Client(Person):
     company_name = models.CharField(_('company name'), max_length=50)
     mobile = models.CharField(_('mobile phone number'), max_length=15)
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name} ({self.company_name})'
+
 
 class Contract(DatedItem):
     client = models.ForeignKey(to=Client, related_name='contractor',
@@ -19,7 +24,15 @@ class Contract(DatedItem):
                                      on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     status = models.BooleanField(_('status')) # mettre default=False, voir à quoi peut servir ce champs
     amount_in_cts = models.IntegerField(_('amount')) # mettre un default = 0
-    due_date = models.DateTimeField(_('due_date'))  # mettre une date par defaut dans le futur à partir de la date de creation
+    due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now())
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        now = timezone.now()
+        self.due_date = now + timedelta(days=90)
+
+    def __str__(self):
+        return f'{self.client}: {self.amount_in_cts} cts'
 
 
 class Event(DatedItem):
