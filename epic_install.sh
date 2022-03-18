@@ -1,7 +1,6 @@
 #!/bin/bash
 
 current_user=$(whoami)
-echo "${$current_user}"
 
 echo "Epic Events Installation."
 echo "The environment and requirements will now be installed..."
@@ -25,11 +24,16 @@ sudo su "${$current_user}"
 
 source venv/bin/activate
 cd epic_events/
-echo "creating database tables models"
+
+echo "deleting previous migrations in case of re-installation..."
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc"  -delete
+
+echo "creating database tables models..."
 python manage.py makemigrations
-echo "creating tables in database"
+echo "creating tables in database..."
 python manage.py migrate
-echo "inserting default data"
+echo "inserting default data..."
 python manage.py loaddata core/fixtures/departments_fixtures.json
 
 echo "Epic Events Installation successfully completed !"
