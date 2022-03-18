@@ -13,8 +13,11 @@ USERS_ROLES = (
 )
 
 # Events
+CREATED = 1
+ONGOING = 2
+TERMINATED = 3
 STATUSES = [
-    (1, 'created'),
-    (2, 'ongoing'),
-    (3, 'terminated')
+    (CREATED, 'created'),
+    (ONGOING, 'ongoing'),
+    (TERMINATED, 'terminated')
 ]

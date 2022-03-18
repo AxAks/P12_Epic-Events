@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 
 from django.db import models
 from django.utils import timezone
@@ -38,11 +38,14 @@ class Contract(DatedItem):
 class Event(DatedItem):
     contract = models.ForeignKey(to=Contract, related_name='event_contract',
                                  on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    status = models.CharField(max_length=10, choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
+    status = models.IntegerField(max_length=10, choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
     attendees = models.IntegerField(_('attendees'), default=0)
     notes = models.TextField(_('notes'))
+
+    def __str__(self):
+        return f'{self.begin_date} to {self.end_date}, attendees: {self.attendees}'
 
 
 class Assignment(DatedItem):
@@ -56,12 +59,21 @@ class ClientAssignment(Assignment):  # pourquoi ? // ContractAssignment, differe
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.client} is assigned to {self.employee}'
+
 
 class ContractAssignment(Assignment):  # pourquoi ? // ClientAssignment, difference?
     contract = models.ForeignKey(to=Contract, related_name='assigned_contract',
                                  on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.contract} is assigned to {self.employee}'
+
 
 class EventAssignment(Assignment):
     event = models.ForeignKey(to=Event, related_name='assigned_event',
                               on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.event}  is assigned to {self.employee}'
