@@ -40,15 +40,19 @@ insofar as the followings are installed:
 [comment]: <> python manage.py createsuperuser
 
 
-In case the script does not work:
+* In case the script does not work:
 
-git clone https://github.com/AxAks/P12_Epic-Events.git
+Download the project:
+in the terminal:
+$ git clone https://github.com/AxAks/P12_Epic-Events.git
+$ cd P12_Epic-Events
+
 Virtualenv (create and activate)
-python3.9 -m virtualenv venv
-source venv/bin/activate
-pip install -r requirements.txt
+$ python3.9 -m virtualenv venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
 
-Create and setup Postgresql database Manually via terminal:
+Create and setup Postgresql database Manually:
 
 $ sudo su postgres     
 $ sudo service postgresql restart
