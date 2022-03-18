@@ -1,12 +1,45 @@
 # P12_Epic-Events
+Study project : Django-based CRM 
 
+## Chapters
+
+1. [Presentation](#presentation)
+2. [Prerequisites (for developers)](#prerequisites)
+3. [Installation](#installation)
+4. [Execution](#execution)
+5. [Usage](#usage)
+
+
+## 1. Presentation <a name="presentation"></a>
+
+This project provides a Django REST API along with a customized Django Admin Interface.
+It will be used as an internal CRM (Customer Relationship Management) software for Epic Events
+
+
+
+## 2. Prerequisites (for developers) <a name="prerequisites"></a>
+This program runs under python 3.9 in a virtual environment and a postgresql database.
+insofar as the followings are installed:
+- python 3.9 (including pip3)
+- virtualenv
+- postgresql 12+
+
+
+## 3. Installation <a name="installation"></a>
 
 
 
 [comment]: <> (à completer, et penser à faire un script epic_install.sh à la guigui pour lancer tout ca en une ligne !)
-Virtualenv (create and activate)
-python3.9 -m virtualenv venv
-source venv/bin/activate
+[comment]: <> cd epic_events/
+[comment]: <> chmod +x ./epic_install.sh ?
+[comment]: <> sh ./epic_install.sh
+
+
+<- git clone https://github.com/AxAks/P12_Epic-Events.git
+<- Virtualenv (create and activate)
+<- python3.9 -m virtualenv venv
+<- source venv/bin/activate
+<- pip install -r requirements.txt
 
 
 Create and setup Postgresql database Manually via terminal:

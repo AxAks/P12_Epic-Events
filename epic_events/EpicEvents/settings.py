@@ -11,9 +11,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import datetime
 from pathlib import Path
+import environment_variables
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-import environment_variables
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -149,9 +149,9 @@ WSGI_APPLICATION = 'EpicEvents.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'epiceventsdb',
-        'USER': 'django',
-        'PASSWORD': 'djangepic',
+        'NAME': environment_variables.db_name,
+        'USER': environment_variables.db_user,
+        'PASSWORD': environment_variables.db_password,
         'HOST': 'localhost',
         'PORT': '5432',
 
