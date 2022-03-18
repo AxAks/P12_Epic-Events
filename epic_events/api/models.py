@@ -24,7 +24,7 @@ class Contract(DatedItem):
                                      on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     status = models.BooleanField(_('status')) # mettre default=False, voir à quoi peut servir ce champs
     amount_in_cts = models.IntegerField(_('amount')) # mettre un default = 0
-    due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now())
+    due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
