@@ -34,13 +34,13 @@ insofar as the followings are installed:
 [comment]: <> cd P12_Epic-Events/
 [comment]: <> sh ./epic_install.sh
 
+In case the script does not work:
 
-<- git clone https://github.com/AxAks/P12_Epic-Events.git
-<- Virtualenv (create and activate)
-<- python3.9 -m virtualenv venv
-<- source venv/bin/activate
-<- pip install -r requirements.txt
-
+git clone https://github.com/AxAks/P12_Epic-Events.git
+Virtualenv (create and activate)
+python3.9 -m virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
 Create and setup Postgresql database Manually via terminal:
 
