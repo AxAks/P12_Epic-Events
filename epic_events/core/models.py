@@ -9,7 +9,7 @@ class DatedItem(models.Model):
     Abstract parent Class for any dated object
     """
     date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
-    date_updated = models.DateTimeField(_('update date'), null=True)
+    date_updated = models.DateTimeField(_('update date'), null=True, auto_now_add=True)
 
     class Meta:
         abstract = True
