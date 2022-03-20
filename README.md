@@ -34,7 +34,6 @@ insofar as the followings are installed:
 [comment]: <> cd P12_Epic-Events/
 [comment]: <> sh ./epic_install.sh
 
-[comment]: <> Create SuperUser
 [comment]: <> source venv/bin/activate
 [comment]: <> cd epic_events
 [comment]: <> python manage.py createsuperuser
@@ -52,8 +51,16 @@ $ python3.9 -m virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 
-Create and setup Postgresql database Manually:
+Handle environment variables with dotenv:
+$ touch .env
+- open the .env file set the following values:
+SECRET_KEY = 'example'
+DB_NAME = 'example'
+DB_USER ='example'
+DB_PASSWORD = 'example'
+PATH_TO_LOGS = 'example'
 
+Create and setup Postgresql database Manually:
 $ sudo su postgres     
 $ sudo service postgresql restart
 $ createdb epiceventsdb
@@ -61,7 +68,6 @@ $ psql
 
 postgres=# create user django with password 'djangepic';      
 postgres=# grant all privileges on database epiceventsdb to django;        
-
 
 python manage.py makemigrations
 python manage.py migrate
