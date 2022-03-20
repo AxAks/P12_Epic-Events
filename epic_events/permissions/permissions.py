@@ -1,13 +1,13 @@
 from rest_framework.permissions import IsAuthenticated
 
-from constants import MANAGER
+from constants import MANAGER, SALES, SUPPORT
 from core.models import Employee
 
 
 class IsManager(IsAuthenticated):
     def has_permission(self, request, view):
-        employee = Employee.objects.filter(id=request.user.id)
-        return bool(employee.department == MANAGER)
+        employee = Employee.objects.get(id=request.user)  # request.user.id = None !!!
+        return bool(MANAGER in employee.groups)
 
     def has_object_permission(self, request, view, obj):
         pass
