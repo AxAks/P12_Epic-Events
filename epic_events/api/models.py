@@ -11,7 +11,7 @@ from constants import STATUSES
 
 class Client(Person):
     company_name = models.CharField(_('company name'), max_length=50)
-    mobile = models.CharField(_('mobile phone number'), max_length=15)
+    mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} ({self.company_name})'
