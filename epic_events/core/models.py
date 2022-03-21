@@ -55,7 +55,8 @@ class Employee(AbstractUser, Person):
         help_text=_("Designates whether the user can log into this admin site."))
     groups = models.ManyToManyField(Department, verbose_name=_("departments"),
                                     help_text=_(
-                                        "The department this user belongs to. An Employee will get all custom_permissions "
+                                        "The department this user belongs to."
+                                        " An Employee will get all custom_permissions "
                                         "granted to  their department."
                                     ),
                                     related_name="user_department",
