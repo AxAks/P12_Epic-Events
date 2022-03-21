@@ -1,25 +1,27 @@
 import logging
 
-from rest_framework.permissions import AllowAny
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from core.serializers import EmployeeSerializer
-from permissions.permissions import IsManager
+from custom_permissions.permissions import EmployeePermissions
 
 logger = logging.getLogger('core_app')
 
 
-class AddEmployeeModelViewSet(ModelViewSet):
+class EmployeeModelViewSet(ModelViewSet):
     """
     Endpoint to create a user
     """
-    permission_classes = (IsManager,)
+    permission_classes = (EmployeePermissions,)
     serializer_class = EmployeeSerializer
 
-
-class AuthenticationTokenView(TokenObtainPairView):
-    """
-    Endpoint to Signup and get authentication Token
-    """
-    permission_classes = (AllowAny,)
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        self.check_object_permissions(request, user)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
