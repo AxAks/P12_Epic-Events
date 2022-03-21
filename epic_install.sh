@@ -25,7 +25,7 @@ read PATH_TO_LOGS
 
 printf "SECRET_KEY = '$SECRET_KEY'\n
 DB_NAME = '$DB_NAME'\n
-DB_USER = '$DB_USER'\
+DB_USER = '$DB_USER'\n
 DB_PASSWORD = '$DB_PASSWORD'\n
 PATH_TO_LOGS = '$PATH_TO_LOGS'\n" > epic_events/.env
 
