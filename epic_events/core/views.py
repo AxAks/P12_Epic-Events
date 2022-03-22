@@ -28,12 +28,17 @@ class EmployeeModelViewSet(ModelViewSet):
 
         employee_serializer = self.get_serializer(data=employee_data)
         employee_serializer.is_valid(raise_exception=True)
-        employee_obj = employee_serializer.save()
         department_serializer = DepartmentSerializer(data=department_data)
         department_serializer.is_valid(raise_exception=True)
         department_id = int(department_serializer.initial_data['department'])
-        department_obj = Department.objects.get(pk=department_id) # try/except àttre la si pas trouvé, ou trouver un truc propre
-        employee_obj.groups.add(department_obj.id)
-
-        headers = self.get_success_headers(employee_serializer.data)
-        return Response(employee_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        try:
+            department_obj = Department.objects.get(pk=department_id)
+            serialized_department = DepartmentSerializer(department_obj)
+            employee_obj = employee_serializer.save()
+            employee_obj.groups.add(department_obj.id)
+            headers = self.get_success_headers(employee_serializer.data)
+            return Response({'employee': employee_serializer.data, 'department': serialized_department.data},
+                            status=status.HTTP_201_CREATED, headers=headers)
+        except Department.DoesNotExist:
+            return Response({'not_found_error': 'The chosen department does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)

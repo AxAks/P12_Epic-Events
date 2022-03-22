@@ -9,7 +9,8 @@ logger = logging.getLogger('django')
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
-        fields = ('id',)
+        fields = ('id', 'name')
+        read_only_fields = ('name',)
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
