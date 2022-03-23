@@ -3,7 +3,7 @@ import logging
 from rest_framework import serializers
 from core.models import Employee, Department
 
-logger = logging.getLogger('django')
+logger = logging.getLogger('core_app')
 
 
 class DepartmentSerializer(serializers.ModelSerializer):

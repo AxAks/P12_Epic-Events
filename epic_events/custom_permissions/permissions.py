@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 
 from custom_permissions.lib_permissions import is_manager, is_sales, is_support
 
@@ -12,14 +12,16 @@ class EmployeePermissions(IsAuthenticated):
             return IsAuthenticated
 
 
-"""
-class ClientPermissions(IsAuthenticated):
-    pass
+class ClientPermissions(IsAuthenticated):  # test client endpoint, permissions à modifier ensuite
 
     def has_object_permission(self, request, view, obj):
-        return is_sales(request, view)
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            return is_sales(request, view)
 
 
+"""
 class ContractPermissions(IsAuthenticated):
     pass
 
