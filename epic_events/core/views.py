@@ -25,16 +25,18 @@ class EmployeeModelViewSet(ModelViewSet):
         """
         user = request.user
         self.check_object_permissions(request, user)
+
         request_data_copy = request.data.dict()
         department_data = {'department': request_data_copy['department']}
         request_data_copy.pop('department')
         employee_data = request_data_copy
 
-
         employee_serializer = self.get_serializer(data=employee_data)
         employee_serializer.is_valid(raise_exception=True)
+
         department_serializer = DepartmentSerializer(data=department_data)
         department_serializer.is_valid(raise_exception=True)
+
         department_id = int(department_serializer.initial_data['department'])
         try:
             department_obj = Department.objects.get(pk=department_id)

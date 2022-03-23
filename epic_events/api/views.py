@@ -1,3 +1,5 @@
+from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Client, Contract, Event
@@ -12,6 +14,20 @@ class ClientModelViewSet(ModelViewSet):
     permission_classes = (ClientPermissions,)
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to create a user along with the department (groups) they belong
+        The user gets the permissions of their department
+        """
+        user = request.user
+        self.check_object_permissions(request, user)
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ContractModelViewSet(ModelViewSet):
