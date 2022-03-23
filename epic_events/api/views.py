@@ -42,7 +42,7 @@ class ClientModelViewSet(ModelViewSet):
 
         client_id = kwargs['client_id']
         try:
-            client = self.queryset.get(id=client_id)  # try/except !
+            client = self.queryset.get(id=client_id)
             serializer = self.serializer_class(client)
             res = Response(serializer.data, status=status.HTTP_200_OK)
             logger.info(f"clients: client infos #{client.id}"  # tous les logs à changer (reformater de facon standard)
