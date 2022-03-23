@@ -23,7 +23,7 @@ class Contract(DatedItem):
     sales_person = models.ForeignKey(to=Employee, related_name='related_sales_person',
                                      on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     status = models.BooleanField(_('status')) # mettre default=False, voir à quoi peut servir ce champs
-    amount_in_cts = models.IntegerField(_('amount')) # mettre un default = 0
+    amount_in_cts = models.IntegerField(_('amount (in cts)')) # mettre un default = 0
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
     def __init__(self, *args, **kwargs):

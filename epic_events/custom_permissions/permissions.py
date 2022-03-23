@@ -21,21 +21,25 @@ class ClientPermissions(IsAuthenticated):  # test client endpoint, permissions 
             return is_sales(request, view)
 
 
+class ContractPermissions(IsAuthenticated):   # test contract endpoint, permissions à modifier ensuite
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            return is_sales(request, view)
+
+
+class EventPermissions(IsAuthenticated):   # test contract endpoint, permissions à modifier ensuite
+
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        else:
+            return is_support(request, view)
+
+
 """
-class ContractPermissions(IsAuthenticated):
-    pass
-
-    def has_object_permission(self, request, view, obj):
-        return is_support(request, view)
-
-
-class EventPermissions(IsAuthenticated):
-    pass
-
-    def has_object_permission(self, request, view, obj):
-        return is_support(request, view)
-
-
 class ClientAssignmentPermissions(IsAuthenticated):
     pass
 
