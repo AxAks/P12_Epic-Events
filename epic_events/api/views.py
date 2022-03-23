@@ -1,3 +1,5 @@
+import logging
+
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -5,6 +7,8 @@ from rest_framework.viewsets import ModelViewSet
 from api.models import Client, Contract, Event
 from custom_permissions.permissions import ClientPermissions, ContractPermissions, EventPermissions
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer
+
+logger = logging.getLogger('api_app')
 
 
 class ClientModelViewSet(ModelViewSet):
@@ -28,6 +32,26 @@ class ClientModelViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def retrieve(self, request, **kwargs):
+        """
+        Returns a specific client by ID
+        """
+        user = request.user
+        self.check_object_permissions(request, user)
+
+        client_id = kwargs['client_id']
+        try:
+            client = self.queryset.get(id=client_id)  # try/except !
+            serializer = self.serializer_class(client)
+            res = Response(serializer.data, status=status.HTTP_200_OK)
+            logger.info(f"clients: client infos #{client.id}"  # tous les logs à changer (reformater de facon standard)
+                        f" requested by User {request.user.first_name} {request.user.last_name}"
+                        f" ({request.user.groups.name})")
+            return res
+        except Client.DoesNotExist:
+            return Response({'not_found_error': 'The requested client does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class ContractModelViewSet(ModelViewSet):

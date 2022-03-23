@@ -13,7 +13,7 @@ logger = logging.getLogger('core_app')
 
 class EmployeeModelViewSet(ModelViewSet):
     """
-    Endpoint to create a user
+    Endpoint for Employees (users)
     """
     permission_classes = (EmployeePermissions,)
     serializer_class = EmployeeSerializer
