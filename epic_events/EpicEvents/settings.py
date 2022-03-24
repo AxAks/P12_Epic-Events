@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'guardian',
     'core',
     'api'
 ]
@@ -170,6 +171,12 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'core.Employee'
 LOGOUT_REDIRECT_URL = '/admin/login'
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

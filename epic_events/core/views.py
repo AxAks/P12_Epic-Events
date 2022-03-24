@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from core.models import Department
+from core.models import Department, Employee
 from core.serializers import EmployeeSerializer, DepartmentSerializer
 from custom_permissions.permissions import EmployeePermissions
 
@@ -17,6 +17,7 @@ class EmployeeModelViewSet(ModelViewSet):
     """
     permission_classes = (EmployeePermissions,)
     serializer_class = EmployeeSerializer
+    queryset = Employee.objects.all()
 
     def create(self, request, *args, **kwargs):
         """
@@ -24,7 +25,8 @@ class EmployeeModelViewSet(ModelViewSet):
         The user gets the permissions of their department
         """
         user = request.user
-        self.check_object_permissions(request, user)
+
+        self.check_object_permissions(request, )
 
         request_data_copy = request.data.dict()
         department_data = {'department': request_data_copy['department']}
@@ -49,3 +51,15 @@ class EmployeeModelViewSet(ModelViewSet):
         except Department.DoesNotExist:
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        self.check_object_permissions(request, Employee)
+
+        page = self.paginate_queryset(self.queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(self.queryset, many=True)
+        return Response(serializer.data)
