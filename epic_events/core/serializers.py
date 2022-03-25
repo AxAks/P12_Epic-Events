@@ -1,14 +1,15 @@
 import logging
 
 from rest_framework import serializers
-from core.models import Employee, Department
+from django.contrib.auth.models import Group
+from core.models import Employee
 
 logger = logging.getLogger('core_app')
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Department
+        model = Group
         fields = ('id', 'name')
         read_only_fields = ('name',)
 

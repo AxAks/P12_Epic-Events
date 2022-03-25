@@ -1,13 +1,13 @@
 import logging
 
+from django.contrib.auth.models import Group
 from rest_framework import status
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from core.models import Department, Employee
+from core.models import Employee
 from core.serializers import EmployeeSerializer, DepartmentSerializer
-
 
 logger = logging.getLogger('core_app')
 
@@ -25,7 +25,6 @@ class EmployeeModelViewSet(ModelViewSet):
         Method to create a user along with the department (groups) they belong
         The user gets the permissions of their department
         """
-        user = request.user
 
         self.check_object_permissions(request, self.queryset)
 
@@ -42,20 +41,19 @@ class EmployeeModelViewSet(ModelViewSet):
 
         department_id = int(department_serializer.initial_data['department'])
         try:
-            department_obj = Department.objects.get(pk=department_id)
+            department_obj = Group.objects.get(pk=department_id)
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
             headers = self.get_success_headers(employee_serializer.data)
             return Response({'employee': employee_serializer.data, 'department': serialized_department.data},
                             status=status.HTTP_201_CREATED, headers=headers)
-        except Department.DoesNotExist:
+        except Group.DoesNotExist:
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
 
     def list(self, request, *args, **kwargs):
-        user = request.user
-        self.check_object_permissions(request, Employee)
+        self.check_object_permissions(request, self.queryset)
 
         page = self.paginate_queryset(self.queryset)
         if page is not None:

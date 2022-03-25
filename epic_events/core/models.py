@@ -32,18 +32,6 @@ class Person(DatedItem):
         abstract = True
 
 
-class Department(Group):
-
-    def __str__(self):
-        return f'{self.name}'
-
-    class Meta:
-        verbose_name = _("department")
-        verbose_name_plural = _("departments")
-        db_table = 'departments'
-        proxy = True
-
-
 class Employee(AbstractUser, Person):
     """
     Extends the Basic User class adding some attributes
@@ -53,7 +41,7 @@ class Employee(AbstractUser, Person):
         _("staff status"),
         default=True,
         help_text=_("Designates whether the user can log into this admin site."))
-    groups = models.ManyToManyField(Department, verbose_name=_("departments"),
+    groups = models.ManyToManyField(Group, verbose_name=_("department"),
                                     help_text=_(
                                         "The department this user belongs to."
                                         " An Employee will get all custom_permissions "

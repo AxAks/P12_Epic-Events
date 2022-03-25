@@ -57,4 +57,8 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py loaddata core/fixtures/departments_fixtures.json
 
+printf "you will now be aksed the information for the creation of a Django superuser\n"
+python manage.py createsuperuser
+
+
 printf "Epic Events Installation successfully completed !\n"

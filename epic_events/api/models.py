@@ -32,7 +32,7 @@ class Contract(DatedItem):
         self.due_date = now + timedelta(days=90)
 
     def __str__(self):
-        return f'{self.client.company_name}, {self.event.name}: {self.amount_in_cts} cts'
+        return f'{self.client.company_name}: {self.amount_in_cts} cts'  # {self.event.name}
 
 
 class Event(DatedItem):
@@ -46,7 +46,7 @@ class Event(DatedItem):
     notes = models.TextField(_('notes'))
 
     def __str__(self):
-        return f'{self.begin_date} to {self.end_date}, attendees: {self.attendees}'
+        return f'{self.name}: {self.begin_date.date()} to {self.end_date.date()}, attendees: {self.attendees}'
 
 
 class Assignment(DatedItem):
