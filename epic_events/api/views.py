@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Client, Contract, Event
-from custom_permissions.permissions import ClientPermissions, ContractPermissions, EventPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer
 
 logger = logging.getLogger('api_app')
@@ -15,7 +15,7 @@ class ClientModelViewSet(ModelViewSet):
     """
     Endpoint for Clients
     """
-    permission_classes = (ClientPermissions,)
+    permission_classes = (DjangoModelPermissions, DjangoObjectPermissions,)
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
@@ -58,7 +58,7 @@ class ContractModelViewSet(ModelViewSet):
     """
     Endpoint for Clients
     """
-    permission_classes = (ContractPermissions,)
+    permission_classes = (DjangoModelPermissions, DjangoObjectPermissions,)
     serializer_class = ContractSerializer
     queryset = Contract.objects.all()
 
@@ -67,6 +67,6 @@ class EventModelViewSet(ModelViewSet):
     """
     Endpoint for Clients
     """
-    permission_classes = (EventPermissions,)
+    permission_classes = (DjangoModelPermissions, DjangoObjectPermissions,)
     serializer_class = EventSerializer
     queryset = Event.objects.all()

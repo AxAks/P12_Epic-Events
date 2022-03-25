@@ -32,10 +32,11 @@ class Contract(DatedItem):
         self.due_date = now + timedelta(days=90)
 
     def __str__(self):
-        return f'{self.client}: {self.amount_in_cts} cts'
+        return f'{self.client.company_name}, {self.event.name}: {self.amount_in_cts} cts'
 
 
 class Event(DatedItem):
+    name = models.CharField(_("event's name"), max_length=50),
     contract = models.ForeignKey(to=Contract, related_name='event_contract',
                                  on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     status = models.IntegerField(choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???

@@ -1,12 +1,9 @@
 from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
 from custom_permissions.lib_permissions import is_manager, is_sales, is_support
 
+"""
+class EmployeePermissions(DjangoModelspermissions):
 
-class EmployeePermissions(IsAuthenticated):
-    """
-    def has_permission(self, request, view):  # has permissions : quels groups peuvent acceder à la vue des employees
-        return is_manager(request, view)
-    """
 
 
 class ClientPermissions(IsAuthenticated):  # test client endpoint, permissions à modifier ensuite
@@ -42,7 +39,7 @@ class EventPermissions(IsAuthenticated):   # test contract endpoint, permission
             return is_support(request, view)
 
 
-"""
+
 class ClientAssignmentPermissions(IsAuthenticated):
     pass
 
