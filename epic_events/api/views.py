@@ -24,8 +24,7 @@ class ClientModelViewSet(ModelViewSet):
         Method to create a user along with the department (groups) they belong
         The user gets the permissions of their department
         """
-        user = request.user
-        self.check_object_permissions(request, user)
+        self.check_object_permissions(request, self.queryset)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -37,12 +36,10 @@ class ClientModelViewSet(ModelViewSet):
         """
         Returns a specific client by ID
         """
-        user = request.user
-        self.check_object_permissions(request, user)
-
         client_id = kwargs['client_id']
         try:
-            client = self.queryset.get(id=client_id)
+            client = self.queryset.filter(id=client_id).first()
+            self.check_object_permissions(request, client)
             serializer = self.serializer_class(client)
             res = Response(serializer.data, status=status.HTTP_200_OK)
             logger.info(f"clients: client infos #{client.id}"  # tous les logs à changer (reformater de facon standard)

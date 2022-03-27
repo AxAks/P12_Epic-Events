@@ -2,7 +2,7 @@ import logging
 
 from django.contrib.auth.models import Group
 from rest_framework import status
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -16,7 +16,7 @@ class EmployeeModelViewSet(ModelViewSet):
     """
     Endpoint for Employees (users)
     """
-    permission_classes = (DjangoModelPermissions, DjangoObjectPermissions)
+    permission_classes = (DjangoModelPermissions,)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
 
@@ -25,9 +25,7 @@ class EmployeeModelViewSet(ModelViewSet):
         Method to create a user along with the department (groups) they belong
         The user gets the permissions of their department
         """
-
-        self.check_object_permissions(request, self.queryset)
-
+        self.check_object_permissions(request, self.queryset) # filter à faire !!
         request_data_copy = request.data.dict()
         department_data = {'department': request_data_copy['department']}
         request_data_copy.pop('department')
@@ -41,7 +39,7 @@ class EmployeeModelViewSet(ModelViewSet):
 
         department_id = int(department_serializer.initial_data['department'])
         try:
-            department_obj = Group.objects.get(pk=department_id)
+            department_obj = Group.objects.filter(pk=department_id).first()
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
@@ -62,3 +60,19 @@ class EmployeeModelViewSet(ModelViewSet):
 
         serializer = self.get_serializer(self.queryset, many=True)
         return Response(serializer.data)
+
+
+class PersonalInfosModelViewSet(ModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = EmployeeSerializer
+    queryset = Employee.objects.all()
+    """
+    Endpoint that return the personal infos of the logged employee
+    """
+    def retrieve(self, request, *args, **kwargs):
+        user = self.queryset.filter(id=request.user.id).first()
+        user_department = user.groups.first()
+        serializer = self.serializer_class(user)
+        serialized_department = DepartmentSerializer(user_department)
+        return Response({'current_employee': serializer.data, 'department': serialized_department.data},
+                        status=status.HTTP_200_OK)
