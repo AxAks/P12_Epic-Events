@@ -41,7 +41,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
         employee.set_password(password)
         employee.save()
 
-        logger.info(f'New employee registered : {employee.first_name} {employee.last_name}')
         return employee
 
 

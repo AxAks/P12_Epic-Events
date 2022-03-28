@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from django.contrib.auth.models import Group
 from rest_framework import status
@@ -45,8 +46,12 @@ class EmployeeModelViewSet(ModelViewSet):
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
             headers = self.get_success_headers(employee_serializer.data)
-            return Response({'employee': employee_serializer.data, 'department': serialized_department.data},
+            res = Response({'employee': employee_serializer.data, 'department': serialized_department.data},
                             status=status.HTTP_201_CREATED, headers=headers)
+            logger.info(
+                f"[{datetime.now()}] add_employee {employee_obj} by: {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
+                f" ({request.user.groups.first().name})")
+            return res
         except Group.DoesNotExist:
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
