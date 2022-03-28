@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from core.models import Employee
 from core.serializers import EmployeeSerializer, DepartmentSerializer
+from custom_permissions.permissions import EmployeePermissions
 
 logger = logging.getLogger('core_app')
 
@@ -16,7 +17,7 @@ class EmployeeModelViewSet(ModelViewSet):
     """
     Endpoint for Employees (users)
     """
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (EmployeePermissions,)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
 

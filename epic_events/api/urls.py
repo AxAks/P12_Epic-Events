@@ -15,7 +15,11 @@ urlpatterns = [
         'put': 'update',
         }
     )),  # 'delete': 'destroy'
-    path('contracts/', ContractModelViewSet.as_view({'get': 'list'})),
+    path('contracts/', ContractModelViewSet.as_view({
+        'get': 'list',
+        'post': 'create',
+        }
+    )),
     path('contracts/<int:contract_id>', ContractModelViewSet.as_view({
         'get': 'retrieve',
         'put': 'update',

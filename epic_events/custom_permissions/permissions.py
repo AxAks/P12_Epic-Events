@@ -1,11 +1,20 @@
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import IsAuthenticated, SAFE_METHODS, DjangoModelPermissions
 from custom_permissions.lib_permissions import is_manager, is_sales, is_support
 
+
+class EmployeePermissions(DjangoModelPermissions):
+    perms_map = {
+        'GET': ['%(app_label)s.retrieve_%(model_name)s', '%(app_label)s.list_%(model_name)s'],
+        'OPTIONS': [],
+        'HEAD': [],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+
 """
-class EmployeePermissions(DjangoModelspermissions):
-
-
-
 class ClientPermissions(IsAuthenticated):  # test client endpoint, permissions à modifier ensuite
     def has_permission(self, request, view):
         return is_manager(request, view) or is_sales(request, view) or is_support(request, view)
