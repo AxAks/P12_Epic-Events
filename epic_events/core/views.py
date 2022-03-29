@@ -45,9 +45,10 @@ class EmployeeModelViewSet(ModelViewSet):
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
+            serialized_employee = EmployeeSerializer(employee_obj)
             headers = self.get_success_headers(employee_serializer.data)
-            res = Response({'employee': employee_serializer.data, 'department': serialized_department.data},
-                            status=status.HTTP_201_CREATED, headers=headers)
+            res = Response({'employee': serialized_employee.data, 'department': serialized_department.data},
+                           status=status.HTTP_201_CREATED, headers=headers)
             logger.info(
                 f"[{datetime.now()}] add_employee {employee_obj} by: {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
                 f" ({request.user.groups.first().name})")

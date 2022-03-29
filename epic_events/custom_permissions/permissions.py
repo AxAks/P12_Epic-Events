@@ -4,7 +4,7 @@ from custom_permissions.lib_permissions import is_manager, is_sales, is_support
 
 class EmployeePermissions(DjangoModelPermissions):
     perms_map = {
-        'GET': ['%(app_label)s.retrieve_%(model_name)s', '%(app_label)s.list_%(model_name)s'],
+        'GET': ['%(app_label)s.view_%(model_name)s'],
         'OPTIONS': [],
         'HEAD': [],
         'POST': ['%(app_label)s.add_%(model_name)s'],
