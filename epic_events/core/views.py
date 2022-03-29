@@ -40,8 +40,8 @@ class EmployeeModelViewSet(ModelViewSet):
         department_serializer.is_valid(raise_exception=True)
 
         department_id = int(department_serializer.initial_data['department'])
-        try:
-            department_obj = Group.objects.filter(pk=department_id).first()
+        department_obj = Group.objects.filter(pk=department_id).first()
+        if department_obj:
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
@@ -52,7 +52,7 @@ class EmployeeModelViewSet(ModelViewSet):
                 f"[{datetime.now()}] add_employee {employee_obj} by: {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
                 f" ({request.user.groups.first().name})")
             return res
-        except Group.DoesNotExist:
+        else:
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
 

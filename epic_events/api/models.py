@@ -36,9 +36,9 @@ class Contract(DatedItem):
 
 
 class Event(DatedItem):
-    name = models.CharField(_("event's name"), max_length=50),
-    contract = models.ForeignKey(to=Contract, related_name='event_contract',
-                                 on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    contract = models.OneToOneField(to=Contract, related_name='event_contract',
+                                    on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+    name = models.CharField(_("event_name"), max_length=50),
     status = models.IntegerField(choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
