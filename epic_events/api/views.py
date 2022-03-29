@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Client, Contract, Event
+from api.models import Client, Contract, Event, ClientAssignment
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer
 

@@ -29,7 +29,7 @@ class CustomEmployeeAdmin(UserAdmin):
             {
                 "classes": ("wide",),
                 "fields": ("first_name", "last_name", "username",
-                           "groups", "email", "phone",
+                           "groups", "user_permissions", "email", "phone",
                            "password1", "password2"),
             },
         ),
