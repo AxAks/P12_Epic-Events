@@ -5,9 +5,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Client, Contract, Event, ClientAssignment
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
+from api.models import Client, Contract, Event
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer
+from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions
 
 logger = logging.getLogger('api_app')
 
@@ -16,7 +16,7 @@ class ClientModelViewSet(ModelViewSet):
     """
     Endpoint for Clients
     """
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (ClientPermissions,)
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
@@ -25,8 +25,6 @@ class ClientModelViewSet(ModelViewSet):
         Method to create a user along with the department (groups) they belong
         The user gets the permissions of their department
         """
-        self.check_object_permissions(request, self.queryset)
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -59,7 +57,7 @@ class ContractModelViewSet(ModelViewSet):
     """
     Endpoint for Contracts
     """
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (ContractPermissions,)
     serializer_class = ContractSerializer
     queryset = Contract.objects.all()
 
@@ -68,8 +66,6 @@ class ContractModelViewSet(ModelViewSet):
         Method to create a contract.
         A contract is linked to a specific client
         """
-        self.check_object_permissions(request, self.queryset)
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -85,7 +81,7 @@ class EventModelViewSet(ModelViewSet):
     """
     Endpoint for Clients
     """
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (EventPermissions,)
     serializer_class = EventSerializer
     queryset = Event.objects.all()
 
@@ -94,14 +90,14 @@ class EventModelViewSet(ModelViewSet):
         Method to create an evant.
         An event is linked to a specific contract
         """
-        self.check_object_permissions(request, self.queryset)
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
-            f"[{datetime.now()}] add_event {serializer.data}: by {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
+            f"[{datetime.now()}] add_event {serializer.data}:"
+            f" by {request.user.first_name} {request.user.last_name}"
             f" ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
         return res

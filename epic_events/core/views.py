@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.contrib.auth.models import Group
 from rest_framework import status
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -27,7 +27,6 @@ class EmployeeModelViewSet(ModelViewSet):
         Method to create a user along with the department (groups) they belong
         The user gets the permissions of their department
         """
-        self.check_object_permissions(request, self.queryset) # filter à faire !!
         request_data_copy = request.data.dict()
         department_data = {'department': request_data_copy['department']}
         request_data_copy.pop('department')
@@ -50,15 +49,16 @@ class EmployeeModelViewSet(ModelViewSet):
             res = Response({'employee': serialized_employee.data, 'department': serialized_department.data},
                            status=status.HTTP_201_CREATED, headers=headers)
             logger.info(
-                f"[{datetime.now()}] add_employee {employee_obj} by: {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
+                f"[{datetime.now()}] add_employee {employee_obj}"
+                f" by: {request.user.first_name} {request.user.last_name}"
                 f" ({request.user.groups.first().name})")
+            # tous les logs à changer (reformater de facon standard)
             return res
         else:
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
 
     def list(self, request, *args, **kwargs):
-        self.check_object_permissions(request, self.queryset)
 
         page = self.paginate_queryset(self.queryset)
         if page is not None:
