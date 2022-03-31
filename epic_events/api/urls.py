@@ -1,34 +1,20 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework_nested import routers
 
 from api.views import ClientModelViewSet, ContractModelViewSet, EventModelViewSet
 
+
 app_name = "api"
 
+
+router = routers.SimpleRouter()
+router.register(r'clients', ClientModelViewSet, basename='clients')
+
+clients_router = routers.NestedSimpleRouter(router, r'clients', lookup='clients')
+clients_router.register(r'contracts', ContractModelViewSet, basename='contracts')
+clients_router.register(r'events', EventModelViewSet, basename='events')
+
 urlpatterns = [
-    path('clients/', ClientModelViewSet.as_view(
-        {'get': 'list',
-         'post': 'create'
-         }
-    )),
-    path('clients/<int:client_id>', ClientModelViewSet.as_view({
-        'get': 'retrieve',
-        'put': 'update',
-        }
-    )),  # 'delete': 'destroy'
-    path('contracts/', ContractModelViewSet.as_view({
-        'get': 'list',
-        'post': 'create',
-        }
-    )),
-    path('contracts/<int:contract_id>', ContractModelViewSet.as_view({
-        'get': 'retrieve',
-        'put': 'update',
-        }
-    )),  # 'delete': 'destroy'
-    path('events/', EventModelViewSet.as_view({'get': 'list'})),
-    path('events/<int:event_id>', ContractModelViewSet.as_view({
-        'get': 'retrieve',
-        'put': 'update',
-        }
-    )),  # 'delete': 'destroy'
+    path(r'', include(router.urls)),
+    path(r'', include(clients_router.urls)),
 ]

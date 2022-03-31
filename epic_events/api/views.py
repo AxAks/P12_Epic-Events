@@ -41,7 +41,7 @@ class ClientModelViewSet(ModelViewSet):
         """
         Returns a specific client by ID
         """
-        client_id = kwargs['client_id']
+        client_id = kwargs['pk']
         try:
             client = self.queryset.filter(id=client_id).first()
             self.check_object_permissions(request, client)
