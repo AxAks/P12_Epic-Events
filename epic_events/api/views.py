@@ -5,9 +5,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Client, Contract, Event
-from api.serializers import ClientSerializer, ContractSerializer, EventSerializer
-from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions
+from api.models import Client, Contract, Event, EventAssignment, ContractAssignment, ClientAssignment
+from api.serializers import ClientSerializer, ContractSerializer, EventSerializer, ClientAssignmentSerializer, \
+    ContractAssignmentSerializer, EventAssignmentSerializer
+from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions, \
+    ClientAssignmentPermissions, ContractAssignmentPermissions, EventAssignmentPermissions
 
 logger = logging.getLogger('api_app')
 
@@ -52,6 +54,23 @@ class ClientModelViewSet(ModelViewSet):
             return Response({'not_found_error': 'The requested client does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
 
+    def update(self, request, **kwargs):
+        """
+        # Enables the employee to update the information of a specific contract
+        """
+        client_id = kwargs['pk']
+        client = Client.objects.filter(id=client_id).first()
+        serializer = self.serializer_class(client, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        client_obj = serializer.update(client, serializer.validated_data)
+        serialized_client = self.serializer_class(client_obj)
+        res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
+        logger.info(
+            f"[{datetime.now()}] update_client {serialized_client.data}"
+            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
 
 class ContractModelViewSet(ModelViewSet):
     """
@@ -72,8 +91,26 @@ class ContractModelViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
-            f"[{datetime.now()}] add_contract {serializer.data}: by {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
-            f" ({request.user.groups.first().name})")
+            f"[{datetime.now()}] add_contract {serializer.data}"
+            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+    def update(self, request, **kwargs):
+        """
+        # Enables the employee to update the information of a specific contract
+        """
+        contract_id = kwargs['pk']
+        contract = Contract.objects.filter(id=contract_id).first()
+        serializer = self.serializer_class(contract, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        contract_obj = serializer.update(contract, serializer.validated_data)
+        serialized_contract = self.serializer_class(contract_obj)
+        res = Response(serialized_contract.data, status=status.HTTP_204_NO_CONTENT)
+        logger.info(
+            f"[{datetime.now()}] update_contract {serialized_contract.data}"
+            f"by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -87,7 +124,7 @@ class EventModelViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """
-        Method to create an evant.
+        Method to create an event.
         An event is linked to a specific contract
         """
         serializer = self.get_serializer(data=request.data)
@@ -97,6 +134,99 @@ class EventModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] add_event {serializer.data}:"
+            f" by {request.user.first_name} {request.user.last_name}"
+            f" ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+    def update(self, request, **kwargs):
+        """
+        # Enables the employee to update the information of a specific event
+        """
+        event_id = kwargs['pk']
+        event = Event.objects.filter(id=event_id).first()
+        serializer = self.serializer_class(event, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        event_obj = serializer.update(event, serializer.validated_data)
+        serialized_event = self.serializer_class(event_obj)
+        res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
+        logger.info(
+            f"[{datetime.now()}] update_event {serialized_event.data}:"
+            f" by {request.user.first_name} {request.user.last_name}"
+            f" ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+
+class ClientAssignmentModelViewSet(ModelViewSet):
+    """
+    Endpoint client assignments
+    """
+    permission_classes = (ClientAssignmentPermissions,)
+    serializer_class = ClientAssignmentSerializer
+    queryset = ClientAssignment.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to assign a Client to a Sales Employee.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.info(
+            f"[{datetime.now()}] assign_client {serializer.data}:"
+            f" by {request.user.first_name} {request.user.last_name}"
+            f" ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+
+class ContractAssignmentModelViewSet(ModelViewSet):
+    """
+    Endpoint contract assignments
+    """
+    permission_classes = (ContractAssignmentPermissions,)
+    serializer_class = ContractAssignmentSerializer
+    queryset = ContractAssignment.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to assign a Contract to a Sales Employee.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.info(
+            f"[{datetime.now()}] assign_contract {serializer.data}:"
+            f" by {request.user.first_name} {request.user.last_name}"
+            f" ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+
+class EventAssignmentModelViewSet(ModelViewSet):
+    """
+    Endpoint event assignments
+    """
+    permission_classes = (EventAssignmentPermissions,)
+    serializer_class = EventAssignmentSerializer
+    queryset = EventAssignment.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to assign an Event to a Support Employee.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.info(
+            f"[{datetime.now()}] assign_event {serializer.data}:"
             f" by {request.user.first_name} {request.user.last_name}"
             f" ({request.user.groups.first().name})")
         # tous les logs à changer (reformater de facon standard)

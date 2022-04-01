@@ -66,7 +66,28 @@ class EmployeeModelViewSet(ModelViewSet):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(self.queryset, many=True)
+        logger.info(
+            f"[{datetime.now()}] list_employee"
+            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
         return Response(serializer.data)
+
+    def update(self, request, **kwargs):
+        """
+        # Enables a manager to update the information of a specific employee
+        """
+        employee_id = kwargs['pk']
+        employee = Employee.objects.filter(id=employee_id).first()
+        serializer = self.serializer_class(employee, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        employee_obj = serializer.update(employee, serializer.validated_data)
+        serialized_employee = self.serializer_class(employee_obj)
+        res = Response(serialized_employee.data, status=status.HTTP_204_NO_CONTENT)
+        logger.info(
+            f"[{datetime.now()}] update_employee {serialized_employee.data}"
+            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
 
 
 class PersonalInfosModelViewSet(ModelViewSet):
@@ -81,5 +102,11 @@ class PersonalInfosModelViewSet(ModelViewSet):
         user_department = user.groups.first()
         serializer = self.serializer_class(user)
         serialized_department = DepartmentSerializer(user_department)
-        return Response({'current_employee': serializer.data, 'department': serialized_department.data},
-                        status=status.HTTP_200_OK)
+        res = Response({'current_employee': serializer.data, 'department': serialized_department.data},
+                       status=status.HTTP_200_OK)
+        logger.info(
+            f"[{datetime.now()}] retrieve_personal_infos"
+            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
