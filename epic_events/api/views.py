@@ -32,9 +32,11 @@ class ClientModelViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        client_obj = Client.objects.filter(id=serializer.data['id']).first()
         logger.info(
-            f"[{datetime.now()}] add_client {serializer.data}: User: {request.user.first_name} {request.user.last_name}"  # tous les logs à changer (reformater de facon standard)
-            f" ({request.user.groups.first().name})")
+            f"[{datetime.now()}] add_client {client_obj}"
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         return res
 
     def retrieve(self, request, **kwargs):
@@ -42,17 +44,14 @@ class ClientModelViewSet(ModelViewSet):
         Returns a specific client by ID
         """
         client_id = kwargs['pk']
-        try:
-            client = self.queryset.filter(id=client_id).first()
-            self.check_object_permissions(request, client)
-            serializer = self.serializer_class(client)
-            res = Response(serializer.data, status=status.HTTP_200_OK)
-            logger.info(f"[{datetime.now()}] retrieve_client {client}"  # tous les logs à changer (reformater de facon standard)
-                        f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
-            return res
-        except Client.DoesNotExist:
-            return Response({'not_found_error': 'The requested client does not exist'},
-                            status=status.HTTP_404_NOT_FOUND)
+        client = self.queryset.filter(id=client_id).first()
+        self.check_object_permissions(request, client)
+        serializer = self.serializer_class(client)
+        res = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info(f"[{datetime.now()}] retrieve_client {client}"  # tous les logs à changer (reformater de facon standard)
+                    f" by {request.user.get_full_name()}"
+                    f" {request.user.get_department()}")
+        return res
 
     def update(self, request, **kwargs):
         """
@@ -67,7 +66,8 @@ class ClientModelViewSet(ModelViewSet):
         res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
             f"[{datetime.now()}] update_client {serialized_client.data}"
-            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -88,12 +88,29 @@ class ContractModelViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+        contract_obj = Contract.objects.filter(id=serializer.data['id']).first()
+        serialized_contract = self.serializer_class(contract_obj)
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        res = Response(serialized_contract.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
-            f"[{datetime.now()}] add_contract {serializer.data}"
-            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f"[{datetime.now()}] add_contract {contract_obj}"
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
+        return res
+
+    def retrieve(self, request, **kwargs):
+        """
+        Returns a specific contract by ID
+        """
+        contract_id = kwargs['pk']
+        contract = self.queryset.filter(id=contract_id).first()
+        self.check_object_permissions(request, contract)
+        serializer = self.serializer_class(contract)
+        res = Response(serializer.data, status=status.HTTP_200_OK)
+        logger.info(f"[{datetime.now()}] retrieve_client {contract}"  # tous les logs à changer (reformater de facon standard)
+                    f" by {request.user.get_full_name()}"
+                    f" {request.user.get_department()}")
         return res
 
     def update(self, request, **kwargs):
@@ -108,8 +125,9 @@ class ContractModelViewSet(ModelViewSet):
         serialized_contract = self.serializer_class(contract_obj)
         res = Response(serialized_contract.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
-            f"[{datetime.now()}] update_contract {serialized_contract.data}"
-            f"by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f"[{datetime.now()}] update_contract {contract_obj}"
+            f" by {request.user.get_full_name()} "
+            f"{request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -134,8 +152,8 @@ class EventModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] add_event {serializer.data}:"
-            f" by {request.user.first_name} {request.user.last_name}"
-            f" ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -152,8 +170,8 @@ class EventModelViewSet(ModelViewSet):
         res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
             f"[{datetime.now()}] update_event {serialized_event.data}:"
-            f" by {request.user.first_name} {request.user.last_name}"
-            f" ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -177,8 +195,8 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_client {serializer.data}:"
-            f" by {request.user.first_name} {request.user.last_name}"
-            f" ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -202,8 +220,8 @@ class ContractAssignmentModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_contract {serializer.data}:"
-            f" by {request.user.first_name} {request.user.last_name}"
-            f" ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -227,7 +245,7 @@ class EventAssignmentModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_event {serializer.data}:"
-            f" by {request.user.first_name} {request.user.last_name}"
-            f" ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res

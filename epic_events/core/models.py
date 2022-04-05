@@ -28,6 +28,9 @@ class Person(DatedItem):
     email = models.EmailField(_('email address'))
     phone = models.CharField(_('phone number'), max_length=15, blank=True)
 
+    def get_full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
     class Meta:
         abstract = True
 
@@ -51,8 +54,11 @@ class Employee(AbstractUser, Person):
                                     related_query_name="employee",
                                     )
 
+    def get_department(self):
+        return self.groups.first() if self.groups.first() else '(Not affected yet)'
+
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return self.get_full_name()
 
     class Meta:
         verbose_name = _('employee')

@@ -46,12 +46,13 @@ class EmployeeModelViewSet(ModelViewSet):
             employee_obj.groups.add(department_obj.id)
             serialized_employee = EmployeeSerializer(employee_obj)
             headers = self.get_success_headers(employee_serializer.data)
-            res = Response({'employee': serialized_employee.data, 'department': serialized_department.data},
+            res = Response({'employee': serialized_employee.data,
+                            'department': serialized_department.data if serialized_department.data else 'Not Affected'},
                            status=status.HTTP_201_CREATED, headers=headers)
             logger.info(
                 f"[{datetime.now()}] add_employee {employee_obj}"
-                f" by: {request.user.first_name} {request.user.last_name}"
-                f" ({request.user.groups.first().name})")
+                f" by: {request.user.get_full_name()}"
+                f" {request.user.get_department()}")
             # tous les logs à changer (reformater de facon standard)
             return res
         else:
@@ -68,7 +69,8 @@ class EmployeeModelViewSet(ModelViewSet):
         serializer = self.get_serializer(self.queryset, many=True)
         logger.info(
             f"[{datetime.now()}] list_employee"
-            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return Response(serializer.data)
 
@@ -85,7 +87,8 @@ class EmployeeModelViewSet(ModelViewSet):
         res = Response(serialized_employee.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
             f"[{datetime.now()}] update_employee {serialized_employee.data}"
-            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" {request.user.get_department()}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -99,14 +102,16 @@ class PersonalInfosModelViewSet(ModelViewSet):
     """
     def retrieve(self, request, *args, **kwargs):
         user = self.queryset.filter(id=request.user.id).first()
-        user_department = user.groups.first()
+        user_department = user.get_department()
         serializer = self.serializer_class(user)
         serialized_department = DepartmentSerializer(user_department)
-        res = Response({'current_employee': serializer.data, 'department': serialized_department.data},
+        res = Response({'current_employee': serializer.data,
+                        'department': serialized_department.data if serialized_department.data else 'Not Affected'},
                        status=status.HTTP_200_OK)
         logger.info(
             f"[{datetime.now()}] retrieve_personal_infos"
-            f" by {request.user.first_name} {request.user.last_name} ({request.user.groups.first().name})")
+            f" by {request.user.get_full_name()}"
+            f" ({request.user.get_department()} )")
         # tous les logs à changer (reformater de facon standard)
         return res
 
