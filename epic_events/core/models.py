@@ -1,3 +1,4 @@
+import propagate as propagate
 from django.db import models
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import AbstractUser
@@ -54,7 +55,8 @@ class Employee(AbstractUser, Person):
                                     related_query_name="employee",
                                     )
 
-    def get_department(self):
+    @property
+    def department(self):
         return self.groups.first() if self.groups.first() else '(Not affected yet)'
 
     def __str__(self):

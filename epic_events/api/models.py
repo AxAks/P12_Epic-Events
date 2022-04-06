@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from core.models import DatedItem, Employee, Person
 
-from constants import STATUSES, SALES
+from constants import STATUSES
 
 
 class Client(Person):
@@ -31,19 +31,27 @@ class Contract(DatedItem):
         now = timezone.now()
         self.due_date = now + timedelta(days=90)
 
-    def get_related_event_name(self):
-        related_event_name = Event.objects.filter(contract=self).first().name \
+    @property
+    def related_client_company_name(self):
+        return self.client.company_name
+
+    @property
+    def related_event_name(self):
+        return Event.objects.filter(contract=self).first().name \
             if Event.objects.filter(contract=self).first() else '(No related event yet)'
-        return related_event_name
+
+    @property
+    def amount_in_euros(self):
+        return self.amount_in_cts / 100
 
     def __str__(self):
-        return f'{self.client.company_name}, {self.get_related_event_name()}: {self.amount_in_cts} cts'
+        return f'{self.related_client_company_name}, {self.related_event_name}: {self.amount_in_euros}€'
 
 
 class Event(DatedItem):
     contract = models.OneToOneField(to=Contract, related_name='event_contract',
                                     on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    name = models.CharField(_('event_name'), max_length=50)  # voir pourqoui il n'est pas reconnu
+    name = models.CharField(_('event_name'), max_length=50)
     status = models.IntegerField(choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))

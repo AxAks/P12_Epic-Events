@@ -36,7 +36,7 @@ class ClientModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] add_client {client_obj}"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         return res
 
     def retrieve(self, request, **kwargs):
@@ -50,7 +50,7 @@ class ClientModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_200_OK)
         logger.info(f"[{datetime.now()}] retrieve_client {client}"  # tous les logs à changer (reformater de facon standard)
                     f" by {request.user.get_full_name()}"
-                    f" {request.user.get_department()}")
+                    f" {request.user.department}")
         return res
 
     def update(self, request, **kwargs):
@@ -67,7 +67,7 @@ class ClientModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] update_client {serialized_client.data}"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -95,7 +95,7 @@ class ContractModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] add_contract {contract_obj}"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -110,7 +110,7 @@ class ContractModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_200_OK)
         logger.info(f"[{datetime.now()}] retrieve_client {contract}"  # tous les logs à changer (reformater de facon standard)
                     f" by {request.user.get_full_name()}"
-                    f" {request.user.get_department()}")
+                    f" {request.user.department}")
         return res
 
     def update(self, request, **kwargs):
@@ -127,7 +127,7 @@ class ContractModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] update_contract {contract_obj}"
             f" by {request.user.get_full_name()} "
-            f"{request.user.get_department()}")
+            f"{request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -153,7 +153,7 @@ class EventModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] add_event {serializer.data}:"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -171,7 +171,7 @@ class EventModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] update_event {serialized_event.data}:"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -196,7 +196,7 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_client {serializer.data}:"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -221,7 +221,7 @@ class ContractAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_contract {serializer.data}:"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -246,6 +246,6 @@ class EventAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_event {serializer.data}:"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res

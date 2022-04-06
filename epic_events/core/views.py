@@ -52,7 +52,7 @@ class EmployeeModelViewSet(ModelViewSet):
             logger.info(
                 f"[{datetime.now()}] add_employee {employee_obj}"
                 f" by: {request.user.get_full_name()}"
-                f" {request.user.get_department()}")
+                f" {request.user.department}")
             # tous les logs à changer (reformater de facon standard)
             return res
         else:
@@ -70,7 +70,7 @@ class EmployeeModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] list_employee"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return Response(serializer.data)
 
@@ -88,7 +88,7 @@ class EmployeeModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] update_employee {serialized_employee.data}"
             f" by {request.user.get_full_name()}"
-            f" {request.user.get_department()}")
+            f" {request.user.department}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -102,7 +102,7 @@ class PersonalInfosModelViewSet(ModelViewSet):
     """
     def retrieve(self, request, *args, **kwargs):
         user = self.queryset.filter(id=request.user.id).first()
-        user_department = user.get_department()
+        user_department = user.department
         serializer = self.serializer_class(user)
         serialized_department = DepartmentSerializer(user_department)
         res = Response({'current_employee': serializer.data,
@@ -111,7 +111,7 @@ class PersonalInfosModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] retrieve_personal_infos"
             f" by {request.user.get_full_name()}"
-            f" ({request.user.get_department()} )")
+            f" ({request.user.department} )")
         # tous les logs à changer (reformater de facon standard)
         return res
 
