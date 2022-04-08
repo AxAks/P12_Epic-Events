@@ -60,7 +60,7 @@ class Employee(AbstractUser, Person):
         return self.groups.first() if self.groups.first() else '(Not affected yet)'
 
     def __str__(self):
-        return self.get_full_name()
+        return f"{self.get_full_name()} ({self.department})"
 
     class Meta:
         verbose_name = _('employee')
