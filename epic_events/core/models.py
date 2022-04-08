@@ -4,6 +4,8 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
+from constants import MANAGER, SALES, SUPPORT
+
 
 class DatedItem(models.Model):
     """
@@ -41,10 +43,6 @@ class Employee(AbstractUser, Person):
     Extends the Basic User class adding some attributes
     the User is renamed "Employee"
     """
-    is_staff = models.BooleanField(
-        _("staff status"),
-        default=True, # non seulement manager ! if manager
-        help_text=_("Designates whether the user can log into this admin site."))
     groups = models.ManyToManyField(Group, verbose_name=_("department"),
                                     help_text=_(
                                         "The department this user belongs to."
@@ -55,12 +53,26 @@ class Employee(AbstractUser, Person):
                                     related_query_name="employee",
                                     )
 
+
     @property
     def department(self):
         return self.groups.first() if self.groups.first() else '(Not affected yet)'
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.department})"
+
+
+    @property
+    def is_manager(self) -> bool:
+        return self.department.id == MANAGER
+
+    @property
+    def is_sales(self) -> bool:
+        return self.department.id == SALES
+
+    @property
+    def is_support(self) -> bool:
+        return self.department.id == SUPPORT
 
     class Meta:
         verbose_name = _('employee')

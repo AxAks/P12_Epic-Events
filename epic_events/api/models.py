@@ -13,6 +13,10 @@ class Client(Person):
     company_name = models.CharField(_('company name'), max_length=50)
     mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
+    @property
+    def is_prospect(self) -> bool:
+        return Contract.objects.filter(client=self).exists()
+
     def __str__(self):
         return f'{self.get_full_name()} ({self.company_name})'
 
@@ -22,7 +26,6 @@ class Contract(DatedItem):
                                on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     sales_person = models.ForeignKey(to=Employee, related_name='related_sales_person',
                                      on_delete=models.CASCADE)  # on delete, à voir... (passer en AnonymousUser peut etre, cf RGPD)
-    status = models.BooleanField(_('status'))  # remplacer par is_signed en @property
     amount_in_cts = models.IntegerField(_('amount (in cts)')) # mettre un default = 0
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
@@ -30,6 +33,10 @@ class Contract(DatedItem):
         super().__init__(*args, **kwargs)
         now = timezone.now()
         self.due_date = now + timedelta(days=90)
+
+    @property
+    def is_signed(self) -> bool:
+        return ContractSignatureAssignment.objects.filter(contract=self).exists()
 
     @property
     def related_client_company_name(self):
@@ -41,8 +48,8 @@ class Contract(DatedItem):
             if Event.objects.filter(contract=self).first() else '(No related event yet)'
 
     @property
-    def amount_in_euros(self):
-        return self.amount_in_cts / 100
+    def amount_in_euros(self) -> float:
+        return round(self.amount_in_cts / 100, 2)
 
     def __str__(self):
         return f'{self.related_client_company_name}, {self.related_event_name}: {self.amount_in_euros}€'
@@ -65,25 +72,43 @@ class Event(DatedItem):
 class Assignment(DatedItem):
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
-    class Meta:
-        abstract = True
 
-
-class ClientAssignment(Assignment):  # pourquoi ? // ContractAssignment, difference?
+class ClientAssignment(Assignment): # pour le suivi du passage de is_prospect True à False
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.client} is assigned to {self.employee}'
+        return f'{self.client} prospecting led by {self.employee}'
 
 
-class ContractAssignment(Assignment):  # pourquoi ? // ClientAssignment, difference?
+class ContractAssignment(Assignment):
+
+    class Meta:
+        abstract = True
+
+
+class ContractNegotiationAssignment(ContractAssignment):  # pour le suivi de la nego du contract de is_signed = False à True
     contract = models.ForeignKey(to=Contract, related_name='assigned_contract',
                                  on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.contract} is assigned to {self.employee}'
+        return f'{self.contract} negotiation led by {self.employee}'
 
+
+class ContractSignatureAssignment(ContractAssignment):  # pour connaitre le statut de signature du contract et la date + l'employee qui a signé
+    contract = models.ForeignKey(to=Contract, related_name='signature_contract_status',
+                                 on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.contract} signature followed by {self.employee}'
+
+
+class ContractPaymentAssignment(ContractAssignment):  # pour savoir si/quand le paiement du contract à été effectué + l'employee qui a enregistré le paiement
+    contract = models.ForeignKey(to=Contract, related_name='payement_contract_status',
+                                 on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.contract} signature followed by {self.employee}'
 
 class EventAssignment(Assignment):
     event = models.ForeignKey(to=Event, related_name='assigned_event',

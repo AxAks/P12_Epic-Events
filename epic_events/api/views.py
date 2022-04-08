@@ -5,9 +5,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Client, Contract, Event, EventAssignment, ContractAssignment, ClientAssignment
+from api.models import Client, Contract, Event, EventAssignment, ContractNegotiationAssignment, \
+    ContractSignatureAssignment, ClientAssignment, ContractPaymentAssignment
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer, ClientAssignmentSerializer, \
-    ContractAssignmentSerializer, EventAssignmentSerializer
+    ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
+    ContractPaymentAssignmentSerializer
 from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions, \
     ClientAssignmentPermissions, ContractAssignmentPermissions, EventAssignmentPermissions
 
@@ -35,8 +37,7 @@ class ClientModelViewSet(ModelViewSet):
         client_obj = Client.objects.filter(id=serializer.data['id']).first()
         logger.info(
             f"[{datetime.now()}] add_client {client_obj}"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         return res
 
     def retrieve(self, request, **kwargs):
@@ -66,8 +67,7 @@ class ClientModelViewSet(ModelViewSet):
         res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
             f"[{datetime.now()}] update_client {serialized_client.data}"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -94,8 +94,7 @@ class ContractModelViewSet(ModelViewSet):
         res = Response(serialized_contract.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] add_contract {contract_obj}"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -152,8 +151,7 @@ class EventModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] add_event {serializer.data}:"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -170,8 +168,7 @@ class EventModelViewSet(ModelViewSet):
         res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
             f"[{datetime.now()}] update_event {serialized_event.data}:"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -195,19 +192,18 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_client {serializer.data}:"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
 
-class ContractAssignmentModelViewSet(ModelViewSet):
+class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     """
     Endpoint contract assignments
     """
     permission_classes = (ContractAssignmentPermissions,)
-    serializer_class = ContractAssignmentSerializer
-    queryset = ContractAssignment.objects.all()
+    serializer_class = ContractNegotiationAssignmentSerializer
+    queryset = ContractNegotiationAssignment.objects.all()
 
     def create(self, request, *args, **kwargs):
         """
@@ -219,9 +215,56 @@ class ContractAssignmentModelViewSet(ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
-            f"[{datetime.now()}] assign_contract {serializer.data}:"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f"[{datetime.now()}] assign_contract_negotiation {serializer.data}:"
+            f" by {request.user}")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+
+class ContractSignatureAssignmentModelViewSet(ModelViewSet):
+    """
+    Endpoint contract assignments
+    """
+    permission_classes = (ContractAssignmentPermissions,)
+    serializer_class = ContractSignatureAssignmentSerializer
+    queryset = ContractSignatureAssignment.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to assign a Contract to a Sales Employee.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.info(
+            f"[{datetime.now()}] signature_contract {serializer.data}:"
+            f" by {request.user}")
+        # tous les logs à changer (reformater de facon standard)
+        return res
+
+
+class ContractPaymentAssignmentModelViewSet(ModelViewSet):
+    """
+    Endpoint contract assignments
+    """
+    permission_classes = (ContractAssignmentPermissions,)
+    serializer_class = ContractPaymentAssignmentSerializer
+    queryset = ContractPaymentAssignment.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        """
+        Method to assign a Contract to a Sales Employee.
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        logger.info(
+            f"[{datetime.now()}] payment_contract {serializer.data}:"
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
 
@@ -245,7 +288,6 @@ class EventAssignmentModelViewSet(ModelViewSet):
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_event {serializer.data}:"
-            f" by {request.user.get_full_name()}"
-            f" {request.user.department}")
+            f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
