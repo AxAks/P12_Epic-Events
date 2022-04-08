@@ -43,7 +43,7 @@ class Employee(AbstractUser, Person):
     """
     is_staff = models.BooleanField(
         _("staff status"),
-        default=True,
+        default=True, # non seulement manager ! if manager
         help_text=_("Designates whether the user can log into this admin site."))
     groups = models.ManyToManyField(Group, verbose_name=_("department"),
                                     help_text=_(
