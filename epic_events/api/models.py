@@ -59,7 +59,7 @@ class Event(DatedItem):
     contract = models.OneToOneField(to=Contract, related_name='event_contract',
                                     on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
     name = models.CharField(_('event_name'), max_length=50)
-    status = models.IntegerField(choices=STATUSES) # ils demandent une ForeignKey ici ???, liée au statut du contrat ???
+    status = models.IntegerField(choices=STATUSES)
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
     attendees = models.IntegerField(_('attendees'), default=0)
@@ -73,7 +73,7 @@ class Assignment(DatedItem):
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
 
-class ClientAssignment(Assignment): # pour le suivi du passage de is_prospect True à False
+class ClientAssignment(Assignment):  # pour le suivi du passage de is_prospect True à False
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
