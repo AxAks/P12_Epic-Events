@@ -72,10 +72,16 @@ class Event(DatedItem):
 class Assignment(DatedItem):
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
+    class Meta:
+        abstract = True
+
 
 class ClientAssignment(Assignment):  # pour le suivi du passage de is_prospect True à False
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
+
+    def to_sales(self):
+        return self.employee.is_sales
 
     def __str__(self):
         return f'{self.client} prospecting led by {self.employee}'
@@ -99,16 +105,23 @@ class ContractSignatureAssignment(ContractAssignment):  # pour connaitre le stat
     contract = models.ForeignKey(to=Contract, related_name='signature_contract_status',
                                  on_delete=models.CASCADE)
 
+    def to_sales(self):
+        return self.employee.is_sales
+
+    def assignable(self):
+        return self.contract.is_signed
+
     def __str__(self):
         return f'{self.contract} signature followed by {self.employee}'
 
 
 class ContractPaymentAssignment(ContractAssignment):  # pour savoir si/quand le paiement du contract à été effectué + l'employee qui a enregistré le paiement
-    contract = models.ForeignKey(to=Contract, related_name='payement_contract_status',
+    contract = models.ForeignKey(to=Contract, related_name='payment_contract_status',
                                  on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.contract} signature followed by {self.employee}'
+
 
 class EventAssignment(Assignment):
     event = models.ForeignKey(to=Event, related_name='assigned_event',

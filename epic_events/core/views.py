@@ -52,7 +52,6 @@ class EmployeeModelViewSet(ModelViewSet):
             res = Response({'employee': serialized_employee.data,
                             'department': serialized_department.data if serialized_department.data else 'Not Affected'},
                            status=status.HTTP_201_CREATED, headers=headers)
-            print(f"{employee_obj.is_manager};{employee_obj.is_sales}; {employee_obj.is_support}")
             logger.info(
                 f"[{datetime.now()}] add_employee {employee_obj}"
                 f" by: {request.user.get_full_name()}"

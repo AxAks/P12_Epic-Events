@@ -52,14 +52,12 @@ class Employee(AbstractUser, Person):
                                     related_query_name="employee",
                                     )
 
-
     @property
     def department(self):
         return self.groups.first() if self.groups.first() else '(Not affected yet)'
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.department})"
-
 
     @property
     def is_manager(self) -> bool:

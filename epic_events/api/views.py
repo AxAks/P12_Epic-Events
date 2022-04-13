@@ -45,11 +45,11 @@ class ClientModelViewSet(ModelViewSet):
         Returns a specific client by ID
         """
         client_id = kwargs['pk']
-        client = self.queryset.filter(id=client_id).first()
-        self.check_object_permissions(request, client)
-        serializer = self.serializer_class(client)
+        client_obj = self.queryset.filter(id=client_id).first()
+        self.check_object_permissions(request, client_obj)
+        serializer = self.serializer_class(client_obj)
         res = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info(f"[{datetime.now()}] retrieve_client {client}"  # tous les logs à changer (reformater de facon standard)
+        logger.info(f"[{datetime.now()}] retrieve_client {client_obj}"  # tous les logs à changer (reformater de facon standard)
                     f" by {request.user.get_full_name()}"
                     f" {request.user.department}")
         return res
@@ -88,7 +88,7 @@ class ContractModelViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        contract_obj = Contract.objects.filter(id=serializer.data['id']).first()
+        contract_obj = self.queryset.filter(id=serializer.data['id']).first()
         serialized_contract = self.serializer_class(contract_obj)
         headers = self.get_success_headers(serializer.data)
         res = Response(serialized_contract.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -103,11 +103,18 @@ class ContractModelViewSet(ModelViewSet):
         Returns a specific contract by ID
         """
         contract_id = kwargs['pk']
-        contract = self.queryset.filter(id=contract_id).first()
-        self.check_object_permissions(request, contract)
-        serializer = self.serializer_class(contract)
+        contract_obj = self.queryset.filter(id=contract_id).first()
+        self.check_object_permissions(request, contract_obj)
+        if not contract_obj:
+            res = Response({'not_found': 'the requested contract does not exist'}, status=status.HTTP_404_NOT_FOUND)
+            logger.info(
+                f"[{datetime.now()}] retrieve_contract id:{contract_id} not_found"  # tous les logs à changer (reformater de facon standard)
+                f" by {request.user.get_full_name()}"
+                f" {request.user.department}")
+            return res
+        serializer = self.serializer_class(contract_obj)
         res = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info(f"[{datetime.now()}] retrieve_client {contract}"  # tous les logs à changer (reformater de facon standard)
+        logger.info(f"[{datetime.now()}] retrieve_client id:{contract_id}"  # tous les logs à changer (reformater de facon standard)
                     f" by {request.user.get_full_name()}"
                     f" {request.user.department}")
         return res
