@@ -45,7 +45,7 @@ class EmployeeModelViewSet(ModelViewSet):
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
-            if department_obj.id == MANAGER:  # essayer de gerer ca dans le model avec un property.setter
+            if department_obj.id == MANAGER:  # essayer de gerer ca dans le model via une methode
                 Employee.objects.filter(pk=employee_obj.id).update(is_staff=True)
             serialized_employee = EmployeeSerializer(employee_obj)
             headers = self.get_success_headers(employee_serializer.data)
