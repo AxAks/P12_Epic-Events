@@ -34,7 +34,7 @@ class ClientModelViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        client_obj = Client.objects.filter(id=serializer.data['id']).first()
+        client_obj = self.queryset.filter(id=serializer.data['id']).first()
         logger.info(
             f"[{datetime.now()}] add_client {client_obj}"
             f" by {request.user}")
@@ -84,13 +84,14 @@ class ContractModelViewSet(ModelViewSet):
         """
         Method to create a contract.
         A contract is linked to a specific client
+        The client must be assigned before the contract is created
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        contract_obj = self.queryset.filter(id=serializer.data['id']).first()
-        serialized_contract = self.serializer_class(contract_obj)
+        contract = serializer.save()
         headers = self.get_success_headers(serializer.data)
+        contract_obj = self.queryset.filter(id=contract.id).first()
+        serialized_contract = self.serializer_class(contract_obj)
         res = Response(serialized_contract.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] add_contract {contract_obj}"
@@ -194,11 +195,12 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        client_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        client_assignment_obj = self.queryset.filter(id=client_assignment.id).first()
         logger.info(
-            f"[{datetime.now()}] assign_client {serializer.data}:"
+            f"[{datetime.now()}] assign_client {client_assignment_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
@@ -218,11 +220,12 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        contract_negotiation_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        contract_negotiation_assignment_obj = self.queryset.filter(id=contract_negotiation_assignment.id).first()
         logger.info(
-            f"[{datetime.now()}] assign_contract_negotiation {serializer.data}:"
+            f"[{datetime.now()}] assign_contract_negotiation {contract_negotiation_assignment_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
@@ -242,11 +245,12 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        signature = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        signature_obj = self.queryset.filter(id=signature.id).first()
         logger.info(
-            f"[{datetime.now()}] signature_contract {serializer.data}:"
+            f"[{datetime.now()}] signature_contract {signature_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res

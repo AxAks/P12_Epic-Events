@@ -1,8 +1,10 @@
+
 from rest_framework import serializers
 
 from api.models import Client, Contract, Event, ClientAssignment, \
     ContractNegotiationAssignment, ContractSignatureAssignment, EventAssignment, ContractPaymentAssignment
 from constants import SUPPORT, SALES
+from core.models import Employee
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -16,7 +18,26 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ('id', 'client', 'sales_person', 'amount_in_cts', 'due_date')
+        fields = ('id', 'client', 'amount_in_cts', 'due_date')
+
+    def save(self) -> Contract:
+        contract = Contract(
+            client=self.validated_data['client'],
+            amount_in_cts=self.validated_data['amount_in_cts'],
+            due_date=self.validated_data['due_date'],
+        )
+        client = Client.objects.filter(id=contract.client.id).first()
+
+        errors = {}
+        if not client.is_assigned:
+            errors['client_must_be_assigned'] = f'The selected client {contract.client}' \
+                                                f' must be assigned to a sales employee first'
+
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        contract.save()
+        return contract
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -37,19 +58,16 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
             employee=self.validated_data['employee'],
             client=self.validated_data['client'],
         )
-        is_sales_employee = client_assignment.employee.groups.first().id == SALES \
-            if client_assignment.employee.groups.first() else False
-        already_assigned = [ClientAssignment.objects.filter(employee=client_assignment.employee).first()]
+        employee = Employee.objects.filter(id=client_assignment.employee.id).first()
+        already_assigned = ClientAssignment.objects.filter(client=client_assignment.client).exists()
 
         errors = {}
-        if not is_sales_employee:
+        if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {client_assignment.employee}' \
-                                               f' ({client_assignment.employee.groups.first()})' \
-                                               f' is not a member of the Sales Department'
+                                               f' must be a member of the Sales Department'
         if already_assigned:
             errors['already_assigned_client'] = f'The client {client_assignment.client} is already assigned ' \
-                                                f'to {client_assignment.employee}' \
-                                                f'  ({client_assignment.employee.groups.first()})'
+                                                f'to {client_assignment.employee}'
         if errors:
             raise serializers.ValidationError(errors)
 
@@ -71,16 +89,14 @@ class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
-        is_sales_employee = contract_negotiation_assignment.employee.groups.first().id == SALES \
-            if contract_negotiation_assignment.employee.groups.first() else False
-        already_assigned = [contract_negotiation_assignment.objects
-                                .filter(employee=contract_negotiation_assignment.employee)
-                                .first()]
+        employee = Employee.objects.filter(id=contract_negotiation_assignment.employee.id).first()
+        already_assigned = ContractNegotiationAssignment.objects\
+            .filter(contract=contract_negotiation_assignment.contract).exists()
 
         errors = {}
-        if not is_sales_employee:  # REGLE METIER : à mettre dan s les Models, trouver comment
+        if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_negotiation_assignment.employee}' \
-                                                 f' is not a member of the Sales Department'
+                                                 f' must be a member of the Sales Department'
 
         if already_assigned:
             errors['already_assigned_client'] = f'The contract {contract_negotiation_assignment.contract}' \
@@ -100,21 +116,19 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
-        is_sales_employee = contract_signature_assignment.employee.groups.first().id == SALES \
-            if contract_signature_assignment.employee.groups.first() else False
-        already_assigned = [ContractSignatureAssignment.objects
-                                .filter(employee=contract_signature_assignment.employee)
-                                .first()]
+        employee = Employee.objects.filter(id=contract_signature_assignment.employee.id).first()
+        already_assigned = ContractSignatureAssignment.objects\
+            .filter(contract=contract_signature_assignment.contract).exists()
 
         errors = {}
-        if not is_sales_employee:  # REGLE METIER : à mettre dan s les Models, trouver comment
-            errors['must_be_sales_employee'] = f'The selected employee {contract_signature_assignment.employee}' \
-                                               f' ({contract_signature_assignment.employee.groups.first()})' \
-                                                 f' is not a member of the Sales Department'
+        if not employee.is_sales:
+            errors['must_be_sales_employee'] = f'The selected employee {contract_signature_assignment.employee}'\
+                                                 f' must be a member of the Sales Department'
 
         if already_assigned:
-            errors['already_assigned_client'] = f'The contract {contract_signature_assignment.contract}' \
-                                                f' is already assigned to {contract_signature_assignment.employee}'
+            errors['already_assigned_client'] = f'The contract {contract_signature_assignment.contract}'\
+                                                f' has already been signed on'\
+                                                f' {contract_signature_assignment.date_created}'
 
         if errors:
             raise serializers.ValidationError(errors)
@@ -130,21 +144,22 @@ class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
-        is_sales_employee = contract_payment_assignment.employee.groups.first().id == SALES \
-            if contract_payment_assignment.employee.groups.first() else False
-        already_assigned = [ContractPaymentAssignment.objects
-                                .filter(employee=contract_payment_assignment.employee)
-                                .first()]
+        employee = Employee.objects.filter(id=contract_payment_assignment.employee.id).first()
+        already_assigned = ContractPaymentAssignment.objects \
+            .filter(contract=contract_payment_assignment.contract).exists()
+        is_signed = contract_payment_assignment.contract.is_signed
 
         errors = {}
-        if not is_sales_employee:  # REGLE METIER : à mettre dan s les Models, trouver comment
+        if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_payment_assignment.employee}' \
                                                f' ({contract_payment_assignment.employee.groups.first()})' \
                                                  f' is not a member of the Sales Department'
-
+        if not is_signed:
+            errors['contract_not_signed'] = f'The contract {contract_payment_assignment.contract}' \
+                                            f'has to be signed before being paid'
         if already_assigned:
             errors['already_assigned_client'] = f'The contract {contract_payment_assignment.contract}' \
-                                                f' is already assigned to {contract_payment_assignment.employee}'
+                                                f' has already been paid on {contract_payment_assignment.date_created}'
 
         if errors:
             raise serializers.ValidationError(errors)

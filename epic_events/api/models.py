@@ -14,7 +14,7 @@ class Client(Person):
     mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
     @property
-    def is_assigned(self) -> bool:
+    def is_assigned(self) -> bool:  # utile ? ou dans serializer ?
         return ClientAssignment.objects.filter(client=self).exists()
 
     @property
@@ -28,8 +28,6 @@ class Client(Person):
 class Contract(DatedItem):
     client = models.ForeignKey(to=Client, related_name='contractor',
                                on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    sales_person = models.ForeignKey(to=Employee, related_name='related_sales_person',
-                                     on_delete=models.CASCADE)  # on delete, à voir... (passer en AnonymousUser peut etre, cf RGPD)
     amount_in_cts = models.IntegerField(_('amount (in cts)')) # mettre un default = 0
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
@@ -39,8 +37,16 @@ class Contract(DatedItem):
         self.due_date = now + timedelta(days=90)
 
     @property
+    def is_assigned(self) -> bool:  # utile ? ou dans serializer ?
+        return ContractAssignment.objects.filter(contract=self).exists()
+
+    @property
     def is_signed(self) -> bool:
         return ContractSignatureAssignment.objects.filter(contract=self).exists()
+
+    @property
+    def is_paid(self) -> bool:
+        return ContractPaymentAssignment.objects.filter(contract=self).exists()
 
     @property
     def related_client_company_name(self):
@@ -54,10 +60,6 @@ class Contract(DatedItem):
     @property
     def amount_in_euros(self) -> float:
         return round(self.amount_in_cts / 100, 2)
-
-    @classmethod
-    def check_client_assignment(cls, client):
-        return client.is_assigned
 
     def __str__(self):
         return f'{self.related_client_company_name}, {self.related_event_name}: {self.amount_in_euros}€'
@@ -88,9 +90,6 @@ class ClientAssignment(Assignment):  # pour le suivi du passage de is_prospect T
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
-    def to_sales(self):
-        return self.employee.is_sales
-
     def __str__(self):
         return f'{self.client} prospecting led by {self.employee}'
 
@@ -120,7 +119,7 @@ class ContractSignatureAssignment(ContractAssignment):  # pour connaitre le stat
         return self.contract.is_signed
 
     def __str__(self):
-        return f'{self.contract} signature followed by {self.employee}'
+        return f'{self.contract} signature on {self.date_created} by {self.employee}'
 
 
 class ContractPaymentAssignment(ContractAssignment):  # pour savoir si/quand le paiement du contract à été effectué + l'employee qui a enregistré le paiement
@@ -128,7 +127,7 @@ class ContractPaymentAssignment(ContractAssignment):  # pour savoir si/quand le 
                                  on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.contract} signature followed by {self.employee}'
+        return f'{self.contract} payment on {self.date_created} followed by {self.employee}'
 
 
 class EventAssignment(Assignment):
@@ -136,4 +135,4 @@ class EventAssignment(Assignment):
                               on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.event}  is assigned to {self.employee}'
+        return f'{self.event}  followed by {self.employee}'

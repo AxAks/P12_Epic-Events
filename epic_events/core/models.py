@@ -54,7 +54,7 @@ class Employee(AbstractUser, Person):
 
     @property
     def department(self):
-        return self.groups.first() if self.groups.first() else '(Not affected yet)'
+        return self.groups.first() if self.groups.first() else 'Not affected yet'
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.department})"
