@@ -11,7 +11,8 @@ from api.serializers import ClientSerializer, ContractSerializer, EventSerialize
     ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
     ContractPaymentAssignmentSerializer
 from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions, \
-    ClientAssignmentPermissions, ContractAssignmentPermissions, EventAssignmentPermissions
+    ClientAssignmentPermissions, ContractNegotiationAssignmentPermissions, ContractSignatureAssignmentPermissions,\
+    ContractPaymentAssignmentPermissions, EventAssignmentPermissions
 
 logger = logging.getLogger('api_app')
 
@@ -206,7 +207,7 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     """
     Endpoint contract assignments
     """
-    permission_classes = (ContractAssignmentPermissions,)
+    permission_classes = (ContractNegotiationAssignmentPermissions,)
     serializer_class = ContractNegotiationAssignmentSerializer
     queryset = ContractNegotiationAssignment.objects.all()
 
@@ -230,7 +231,7 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     """
     Endpoint contract assignments
     """
-    permission_classes = (ContractAssignmentPermissions,)
+    permission_classes = (ContractSignatureAssignmentPermissions,)
     serializer_class = ContractSignatureAssignmentSerializer
     queryset = ContractSignatureAssignment.objects.all()
 
@@ -254,7 +255,7 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     """
     Endpoint contract assignments
     """
-    permission_classes = (ContractAssignmentPermissions,)
+    permission_classes = (ContractPaymentAssignmentPermissions,)
     serializer_class = ContractPaymentAssignmentSerializer
     queryset = ContractPaymentAssignment.objects.all()
 
