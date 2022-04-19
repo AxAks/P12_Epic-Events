@@ -71,6 +71,11 @@ class Employee(AbstractUser, Person):
     def is_support(self) -> bool:
         return self.department.id == SUPPORT
 
+    @classmethod
+    def set_is_staff(cls, employee_obj):
+        Employee.objects.filter(pk=employee_obj.id).update(is_staff=True)
+        return employee_obj
+
     class Meta:
         verbose_name = _('employee')
         verbose_name_plural = _('employees')

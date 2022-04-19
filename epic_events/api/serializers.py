@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from api.models import Client, Contract, Event, ClientAssignment, \
     ContractNegotiationAssignment, ContractSignatureAssignment, EventAssignment, ContractPaymentAssignment
-from constants import SUPPORT, SALES
 from core.models import Employee
 
 

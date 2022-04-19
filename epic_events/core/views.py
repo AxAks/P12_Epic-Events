@@ -45,18 +45,17 @@ class EmployeeModelViewSet(ModelViewSet):
             serialized_department = DepartmentSerializer(department_obj)
             employee_obj = employee_serializer.save()
             employee_obj.groups.add(department_obj.id)
-            if department_obj.id == MANAGER:  # essayer de gerer ca dans le model via une methode
-                Employee.objects.filter(pk=employee_obj.id).update(is_staff=True)
+            if department_obj.id == MANAGER:
+                Employee.set_is_staff(employee_obj)
             serialized_employee = EmployeeSerializer(employee_obj)
             headers = self.get_success_headers(employee_serializer.data)
             res = Response({'employee': serialized_employee.data,
-                            'department': serialized_department.data if serialized_department.data else 'Not Affected'},
+                            'department': serialized_department.data if serialized_department.data
+                            else 'Not Affected'},
                            status=status.HTTP_201_CREATED, headers=headers)
             logger.info(
                 f"[{datetime.now()}] add_employee {employee_obj}"
-                f" by: {request.user.get_full_name()}"
-                f" {request.user.department}")
-            # tous les logs à changer (reformater de facon standard)
+                f" by: {request.user}")
             return res
         else:
             return Response({'not_found_error': 'The chosen department does not exist'},
@@ -71,9 +70,7 @@ class EmployeeModelViewSet(ModelViewSet):
 
         serializer = self.get_serializer(self.queryset, many=True)
         logger.info(
-            f"[{datetime.now()}] list_employee"
-            f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
+            f"[{datetime.now()}] list_employees by {request.user}")
         return Response(serializer.data)
 
     def update(self, request, **kwargs):
@@ -88,9 +85,8 @@ class EmployeeModelViewSet(ModelViewSet):
         serialized_employee = self.serializer_class(employee_obj)
         res = Response(serialized_employee.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
-            f"[{datetime.now()}] update_employee {serialized_employee.data}"
+            f"[{datetime.now()}] update_employee {employee_obj}"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -112,6 +108,4 @@ class PersonalInfosModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] retrieve_personal_infos"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
-

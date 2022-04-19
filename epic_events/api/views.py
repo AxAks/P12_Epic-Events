@@ -49,14 +49,14 @@ class ClientModelViewSet(ModelViewSet):
         self.check_object_permissions(request, client_obj)
         serializer = self.serializer_class(client_obj)
         res = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info(f"[{datetime.now()}] retrieve_client {client_obj}"  # tous les logs à changer (reformater de facon standard)
+        logger.info(f"[{datetime.now()}] retrieve_client {client_obj}"
                     f" by {request.user.get_full_name()}"
                     f" {request.user.department}")
         return res
 
     def update(self, request, **kwargs):
         """
-        # Enables the employee to update the information of a specific contract
+        Enables the employee to update the information of a specific contract
         """
         client_id = kwargs['pk']
         client = Client.objects.filter(id=client_id).first()
@@ -66,9 +66,8 @@ class ClientModelViewSet(ModelViewSet):
         serialized_client = self.serializer_class(client_obj)
         res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
-            f"[{datetime.now()}] update_client {serialized_client.data}"
+            f"[{datetime.now()}] update_client {client_obj}"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -96,7 +95,6 @@ class ContractModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] add_contract {contract_obj}"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
     def retrieve(self, request, **kwargs):
@@ -109,13 +107,13 @@ class ContractModelViewSet(ModelViewSet):
         if not contract_obj:
             res = Response({'not_found': 'the requested contract does not exist'}, status=status.HTTP_404_NOT_FOUND)
             logger.info(
-                f"[{datetime.now()}] retrieve_contract id:{contract_id} not_found"  # tous les logs à changer (reformater de facon standard)
+                f"[{datetime.now()}] retrieve_contract id:{contract_id} not_found"
                 f" by {request.user.get_full_name()}"
                 f" {request.user.department}")
             return res
         serializer = self.serializer_class(contract_obj)
         res = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info(f"[{datetime.now()}] retrieve_client id:{contract_id}"  # tous les logs à changer (reformater de facon standard)
+        logger.info(f"[{datetime.now()}] retrieve_contract {contract_obj}"
                     f" by {request.user.get_full_name()}"
                     f" {request.user.department}")
         return res
@@ -135,7 +133,6 @@ class ContractModelViewSet(ModelViewSet):
             f"[{datetime.now()}] update_contract {contract_obj}"
             f" by {request.user.get_full_name()} "
             f"{request.user.department}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -162,7 +159,6 @@ class EventModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] add_event {event_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
     def update(self, request, **kwargs):
@@ -177,9 +173,8 @@ class EventModelViewSet(ModelViewSet):
         serialized_event = self.serializer_class(event_obj)
         res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
         logger.info(
-            f"[{datetime.now()}] update_event {serialized_event.data}:"
+            f"[{datetime.now()}] update_event {event_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -204,7 +199,6 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_client {client_assignment_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -229,7 +223,6 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_contract_negotiation {contract_negotiation_assignment_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -254,7 +247,6 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] signature_contract {signature_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -279,7 +271,6 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] payment_contract {payment_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res
 
 
@@ -304,5 +295,4 @@ class EventAssignmentModelViewSet(ModelViewSet):
         logger.info(
             f"[{datetime.now()}] assign_event {event_assignment_obj}:"
             f" by {request.user}")
-        # tous les logs à changer (reformater de facon standard)
         return res

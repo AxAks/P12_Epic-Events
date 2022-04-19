@@ -86,7 +86,7 @@ class Assignment(DatedItem):
         abstract = True
 
 
-class ClientAssignment(Assignment):  # pour le suivi du passage de is_prospect True à False
+class ClientAssignment(Assignment):
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
@@ -100,7 +100,7 @@ class ContractAssignment(Assignment):
         abstract = True
 
 
-class ContractNegotiationAssignment(ContractAssignment):  # pour le suivi de la nego du contract de is_signed = False à True
+class ContractNegotiationAssignment(ContractAssignment):
     contract = models.ForeignKey(to=Contract, related_name='assigned_contract',
                                  on_delete=models.CASCADE)
 
@@ -108,7 +108,7 @@ class ContractNegotiationAssignment(ContractAssignment):  # pour le suivi de la 
         return f'{self.contract} negotiation led by {self.employee}'
 
 
-class ContractSignatureAssignment(ContractAssignment):  # pour connaitre le statut de signature du contract et la date + l'employee qui a signé
+class ContractSignatureAssignment(ContractAssignment):
     contract = models.ForeignKey(to=Contract, related_name='signature_contract_status',
                                  on_delete=models.CASCADE)
 
@@ -122,7 +122,7 @@ class ContractSignatureAssignment(ContractAssignment):  # pour connaitre le stat
         return f'{self.contract} signature on {self.date_created} by {self.employee}'
 
 
-class ContractPaymentAssignment(ContractAssignment):  # pour savoir si/quand le paiement du contract à été effectué + l'employee qui a enregistré le paiement
+class ContractPaymentAssignment(ContractAssignment):
     contract = models.ForeignKey(to=Contract, related_name='payment_contract_status',
                                  on_delete=models.CASCADE)
 
