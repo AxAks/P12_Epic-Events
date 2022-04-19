@@ -46,6 +46,28 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ('id', 'name', 'contract', 'status', 'begin_date', 'end_date', 'attendees', 'notes')
 
+    def save(self) -> Event:
+        event = Event(
+            name=self.validated_data['name'],
+            contract=self.validated_data['contract'],
+            status=self.validated_data['status'],
+            begin_date=self.validated_data['begin_date'],
+            end_date=self.validated_data['end_date'],
+            attendees=self.validated_data['attendees'],
+            notes=self.validated_data['notes'],
+        )
+        contract = Contract.objects.filter(id=event.contract.id).first()
+
+        errors = {}
+        if not contract.is_signed:
+            errors['must_be_signed'] = f'The related contract: {event.contract}' \
+                                               f' must be signed before the event can be created'
+        if errors:
+            raise serializers.ValidationError(errors)
+
+        event.save()
+        return event
+
 
 class ClientAssignmentSerializer(serializers.ModelSerializer):
 
@@ -117,6 +139,7 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
             contract=self.validated_data['contract'],
         )
         employee = Employee.objects.filter(id=contract_signature_assignment.employee.id).first()
+        contract = Contract.objects.filter(id=contract_signature_assignment.contract.id).first()
         already_assigned = ContractSignatureAssignment.objects\
             .filter(contract=contract_signature_assignment.contract).exists()
 
@@ -124,6 +147,10 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_signature_assignment.employee}'\
                                                  f' must be a member of the Sales Department'
+        if not contract.registered_negotiator:
+            errors['no_negotiator_registered'] = f'The negotiation for :' \
+                                                 f' {contract_signature_assignment.contract}'\
+                                                 f' must be registered before it can be signed'
 
         if already_assigned:
             errors['already_assigned_client'] = f'The contract {contract_signature_assignment.contract}'\
@@ -179,14 +206,13 @@ class EventAssignmentSerializer(serializers.ModelSerializer):
             employee=self.validated_data['employee'],
             event=self.validated_data['event'],
         )
-        is_support_employee = event_assignment.employee.groups.first().id == SUPPORT \
-            if event_assignment.employee.groups.first() else False
-        already_assigned = [EventAssignment.objects.filter(employee=event_assignment.employee).first()]
+        employee = Employee.objects.filter(id=event_assignment.employee.id).first()
+        already_assigned = EventAssignment.objects.filter(event=event_assignment.event).first()
 
         errors = {}
-        if not is_support_employee:  # REGLE METIER : à mettre dan s les Models, trouver comment
+        if not employee.is_support:
             errors['must_be_support_employee'] = f'The selected employee {event_assignment.employee}' \
-                                                 f' is not a member of the Support Department'
+                                                 f' must be a member of the Support Department'
         if already_assigned:
             errors['already_assigned_client'] = f'The event {event_assignment.event}' \
                                                 f' is already assigned to {event_assignment.employee}'

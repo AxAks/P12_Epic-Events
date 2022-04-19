@@ -28,7 +28,7 @@ class Client(Person):
 class Contract(DatedItem):
     client = models.ForeignKey(to=Client, related_name='contractor',
                                on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
-    amount_in_cts = models.IntegerField(_('amount (in cts)')) # mettre un default = 0
+    amount_in_cts = models.IntegerField(_('amount (in cts)'))
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
     def __init__(self, *args, **kwargs):
@@ -37,8 +37,8 @@ class Contract(DatedItem):
         self.due_date = now + timedelta(days=90)
 
     @property
-    def is_assigned(self) -> bool:  # utile ? ou dans serializer ?
-        return ContractAssignment.objects.filter(contract=self).exists()
+    def registered_negotiator(self) -> bool:
+        return ContractNegotiationAssignment.objects.filter(contract=self).exists()
 
     @property
     def is_signed(self) -> bool:
@@ -73,7 +73,7 @@ class Event(DatedItem):
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
     attendees = models.IntegerField(_('attendees'), default=0)
-    notes = models.TextField(_('notes'))
+    notes = models.TextField(_('notes'), blank=True)
 
     def __str__(self):
         return f'{self.name}: {self.begin_date.date()} to {self.end_date.date()}, attendees: {self.attendees}'

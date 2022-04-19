@@ -154,11 +154,13 @@ class EventModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        event = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        event_obj = self.queryset.filter(id=event.id).first()
+        serialized_event = self.serializer_class(event_obj)
+        res = Response(serialized_event.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
-            f"[{datetime.now()}] add_event {serializer.data}:"
+            f"[{datetime.now()}] add_event {event_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
@@ -270,11 +272,12 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        payment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        payment_obj = self.queryset.filter(id=payment.id).first()
         logger.info(
-            f"[{datetime.now()}] payment_contract {serializer.data}:"
+            f"[{datetime.now()}] payment_contract {payment_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
@@ -294,11 +297,12 @@ class EventAssignmentModelViewSet(ModelViewSet):
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        event_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        event_assignment_obj = self.queryset.filter(id=event_assignment.id).first()
         logger.info(
-            f"[{datetime.now()}] assign_event {serializer.data}:"
+            f"[{datetime.now()}] assign_event {event_assignment_obj}:"
             f" by {request.user}")
         # tous les logs à changer (reformater de facon standard)
         return res
