@@ -75,7 +75,7 @@ class EmployeeModelViewSet(ModelViewSet):
 
     def update(self, request, **kwargs):
         """
-        # Enables a manager to update the information of a specific employee
+        Enables a manager to update the information of a specific employee
         """
         employee_id = kwargs['pk']
         employee = Employee.objects.filter(id=employee_id).first()

@@ -121,7 +121,7 @@ class ContractModelViewSet(ModelViewSet):
 
     def update(self, request, **kwargs):
         """
-        # Enables the employee to update the information of a specific contract
+        Enables the employee to update the information of a specific contract
         """
         contract_id = kwargs['pk']
         contract = Contract.objects.filter(id=contract_id).first()
@@ -164,7 +164,7 @@ class EventModelViewSet(ModelViewSet):
 
     def update(self, request, **kwargs):
         """
-        # Enables the employee to update the information of a specific event
+        Enables the employee to update the information of a specific event
         """
         event_id = kwargs['pk']
         event = Event.objects.filter(id=event_id).first()
