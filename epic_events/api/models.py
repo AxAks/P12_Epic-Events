@@ -14,6 +14,10 @@ class Client(Person):
     mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
     @property
+    def is_assigned(self) -> bool:
+        return ClientAssignment.objects.filter(client=self).exists()
+
+    @property
     def is_prospect(self) -> bool:
         return Contract.objects.filter(client=self).exists()
 
@@ -50,6 +54,10 @@ class Contract(DatedItem):
     @property
     def amount_in_euros(self) -> float:
         return round(self.amount_in_cts / 100, 2)
+
+    @classmethod
+    def check_client_assignment(cls, client):
+        return client.is_assigned
 
     def __str__(self):
         return f'{self.related_client_company_name}, {self.related_event_name}: {self.amount_in_euros}€'
