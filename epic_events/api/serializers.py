@@ -152,9 +152,11 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
                                                  f' must be registered before it can be signed'
 
         if already_assigned:
+            signature_details = ContractSignatureAssignment.objects\
+                .filter(contract=contract_signature_assignment.contract).first()
             errors['already_assigned_client'] = f'The contract {contract_signature_assignment.contract}'\
                                                 f' has already been signed on'\
-                                                f' {contract_signature_assignment.date_created}'
+                                                f' {signature_details.date_created.date()}'
 
         if errors:
             raise serializers.ValidationError(errors)
@@ -184,8 +186,10 @@ class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
             errors['contract_not_signed'] = f'The contract {contract_payment_assignment.contract}' \
                                             f'has to be signed before being paid'
         if already_assigned:
+            payment_details = ContractPaymentAssignment.objects \
+                .filter(contract=contract_payment_assignment.contract).first()
             errors['already_assigned_client'] = f'The contract {contract_payment_assignment.contract}' \
-                                                f' has already been paid on {contract_payment_assignment.date_created}'
+                                                f' has already been paid on {payment_details.date_created.date()}'
 
         if errors:
             raise serializers.ValidationError(errors)

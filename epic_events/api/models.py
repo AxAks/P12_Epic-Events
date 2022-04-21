@@ -112,12 +112,6 @@ class ContractSignatureAssignment(ContractAssignment):
     contract = models.ForeignKey(to=Contract, related_name='signature_contract_status',
                                  on_delete=models.CASCADE)
 
-    def to_sales(self):
-        return self.employee.is_sales
-
-    def assignable(self):
-        return self.contract.is_signed
-
     def __str__(self):
         return f'{self.contract} signature on {self.date_created} by {self.employee}'
 
