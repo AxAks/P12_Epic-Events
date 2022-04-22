@@ -34,13 +34,20 @@ printf "\nThe Defaut postgreSQL database port is '5432'. Do you want to change t
 select yn in "No" "Yes"; do
   case $yn in
     No) DB_PORT='5432'; break;;
-    Yes) read -p "Please provide the new database Port: " DB_PORT; break;;
+    Yes) read -p "Please provide the new database port: " DB_PORT; break;;
   esac
 done
 printf "DB_PORT will be: '$DB_PORT' ";
 
-printf "\nPlease provide a name for the app logs file: \n"
-read PATH_TO_LOGS
+printf "\nThe Defaut  path to logs is 'epic.log'. Do you want to change this settings?\n"
+select yn in "No" "Yes"; do
+  case $yn in
+    No) PATH_TO_LOGS='epic.log'; break;;
+    Yes) read -p "Please provide the new path to logs:" PATH_TO_LOGS; break;;
+  esac
+done
+printf "DB_HOST will be: '$PATH_TO_LOGS' ";
+
 
 printf "SECRET_KEY = '$SECRET_KEY'\n
 DB_NAME = '$DB_NAME'\n
