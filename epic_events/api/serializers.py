@@ -82,6 +82,14 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
         employee = Employee.objects.filter(id=client_assignment.employee.id).first()
         already_assigned = ClientAssignment.objects.filter(client=client_assignment.client).exists()
 
+        extra_kwargs = {
+            'title': {
+                'error_messages': {
+                    'unique': 'my custom error message for title'
+                }
+            }
+        }
+
         errors = {}
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {client_assignment.employee}' \
@@ -90,7 +98,7 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
             errors['already_assigned_client'] = f'The client {client_assignment.client} is already assigned ' \
                                                 f'to {client_assignment.employee}'
         if errors:
-            raise serializers.ValidationError(errors)
+            raise serializers.ValidationError(self.errors)
 
         client_assignment.save()
         return client_assignment
