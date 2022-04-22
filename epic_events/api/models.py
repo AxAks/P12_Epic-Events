@@ -86,9 +86,9 @@ class Assignment(DatedItem):  # one_to_one_field ? must be unique !
         abstract = True
 
 
-class ClientAssignment(Assignment):   # one_to_one_field ? must be unique !
-    client = models.ForeignKey(to=Client, related_name='assigned_client',
-                               on_delete=models.CASCADE)
+class ClientAssignment(Assignment):  # one_to_one_field ? must be unique !
+    client = models.OneToOneField(to=Client, related_name='assigned_client',
+                                  on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.client} prospecting led by {self.employee}'
