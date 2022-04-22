@@ -19,7 +19,7 @@ class Client(Person):
 
     @property
     def is_prospect(self) -> bool:
-        return Contract.objects.filter(client=self).exists()
+        return not Contract.objects.filter(client=self).exists()
 
     def __str__(self):
         return f'{self.get_full_name()} ({self.company_name})'
@@ -79,14 +79,14 @@ class Event(DatedItem):
         return f'{self.name}: {self.begin_date.date()} to {self.end_date.date()}, attendees: {self.attendees}'
 
 
-class Assignment(DatedItem):
+class Assignment(DatedItem):  # one_to_one_field ? must be unique !
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
 
 
-class ClientAssignment(Assignment):
+class ClientAssignment(Assignment):   # one_to_one_field ? must be unique !
     client = models.ForeignKey(to=Client, related_name='assigned_client',
                                on_delete=models.CASCADE)
 
@@ -101,32 +101,32 @@ class ContractAssignment(Assignment):
 
 
 class ContractNegotiationAssignment(ContractAssignment):
-    contract = models.ForeignKey(to=Contract, related_name='assigned_contract',
-                                 on_delete=models.CASCADE)
+    contract = models.OneToOneField(to=Contract, related_name='assigned_contract',
+                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.contract} negotiation led by {self.employee}'
 
 
 class ContractSignatureAssignment(ContractAssignment):
-    contract = models.ForeignKey(to=Contract, related_name='signature_contract_status',
-                                 on_delete=models.CASCADE)
+    contract = models.OneToOneField(to=Contract, related_name='signature_contract_status',
+                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.contract} signature on {self.date_created} by {self.employee}'
 
 
 class ContractPaymentAssignment(ContractAssignment):
-    contract = models.ForeignKey(to=Contract, related_name='payment_contract_status',
-                                 on_delete=models.CASCADE)
+    contract = models.OneToOneField(to=Contract, related_name='payment_contract_status',
+                                    on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.contract} payment on {self.date_created} followed by {self.employee}'
 
 
 class EventAssignment(Assignment):
-    event = models.ForeignKey(to=Event, related_name='assigned_event',
-                              on_delete=models.CASCADE)
+    event = models.OneToOneField(to=Event, related_name='assigned_event',
+                                 on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.event}  followed by {self.employee}'
