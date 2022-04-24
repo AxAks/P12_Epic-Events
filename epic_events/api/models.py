@@ -132,7 +132,7 @@ class ContractNegotiationAssignment(ContractAssignment):
             )
         else:
             return ValidationError(
-                message=_(f"{self.client} is already followed"
+                message=_(f"{self.contract} is already followed"
                           f" by {self.find_assigned_employee_for_contract(self.contract)}"),
                 code="unique_together",
             )
@@ -148,6 +148,24 @@ class ContractNegotiationAssignment(ContractAssignment):
 class ContractSignatureAssignment(ContractAssignment):
     contract = models.OneToOneField(to=Contract, related_name='signature_contract_status',
                                     on_delete=models.CASCADE)
+
+    def unique_error_message(self, model_class, unique_check):
+        if len(unique_check) == 1:
+            return ValidationError(
+                message=_(f"{self.contract} was already signed on {self.contract.date_created.date()}"
+                          f" by {self.find_signature_details_for_contract(self.contract)}"),
+                code="unique",
+            )
+        else:
+            return ValidationError(
+                message=_(f"{self.contract} was already signed on {self.contract.date_created.date()}"
+                          f" by {self.find_signature_details_for_contract(self.contract)}"),
+                code="unique_together",
+            )
+
+    @classmethod
+    def find_signature_details_for_contract(cls, contract):
+        return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
         return f'{self.contract} signature on {self.date_created} by {self.employee}'

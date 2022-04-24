@@ -103,13 +103,13 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
 
 
 class ContractAssignmentSerializer(serializers.ModelSerializer):
+    pass
+
+class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
 
     class Meta:
         model = ContractNegotiationAssignment
         fields = ('id', 'employee', 'contract')
-
-
-class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
 
     def __init__(self, *args, **kwargs):
         """
@@ -142,6 +142,20 @@ class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
 
 class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
 
+    class Meta:
+        model = ContractSignatureAssignment
+        fields = ('id', 'employee', 'contract')
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides parent init to add business logic
+        and return custom error messages
+        """
+        super(ContractSignatureAssignmentSerializer, self).__init__(*args, **kwargs)
+        for validator in self.fields['contract'].validators:
+            if isinstance(validator, validators.UniqueValidator):
+                validator.message = 'This contract has already been signed'
+
     def save(self) -> ContractSignatureAssignment:
         contract_signature_assignment = ContractSignatureAssignment(
             employee=self.validated_data['employee'],
@@ -149,8 +163,6 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
         )
         employee = Employee.objects.filter(id=contract_signature_assignment.employee.id).first()
         contract = Contract.objects.filter(id=contract_signature_assignment.contract.id).first()
-        already_assigned = ContractSignatureAssignment.objects\
-            .filter(contract=contract_signature_assignment.contract).exists()
 
         errors = {}
         if not employee.is_sales:
@@ -161,13 +173,6 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
                                                  f' {contract_signature_assignment.contract}'\
                                                  f' must be registered before it can be signed'
 
-        if already_assigned:
-            signature_details = ContractSignatureAssignment.objects\
-                .filter(contract=contract_signature_assignment.contract).first()
-            errors['already_assigned_client'] = f'The contract {contract_signature_assignment.contract}'\
-                                                f' has already been signed on'\
-                                                f' {signature_details.date_created.date()}'
-
         if errors:
             raise serializers.ValidationError(errors)
 
@@ -176,6 +181,10 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
 
 
 class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
+
+    class Meta:
+        model = ContractPaymentAssignment
+        fields = ('id', 'employee', 'contract')
 
     def save(self) -> ContractPaymentAssignment:
         contract_payment_assignment = ContractPaymentAssignment(
