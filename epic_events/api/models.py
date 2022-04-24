@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -61,6 +61,12 @@ class Contract(DatedItem):
     @property
     def amount_in_euros(self) -> float:
         return round(self.amount_in_cts / 100, 2)
+
+    def clean(self):
+        if not self.client.is_assigned:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected client {self.client}' # se limite à une seule erreur ??
+                                   f' must be assigned to a sales employee first'})
 
     def __str__(self):
         return f'{self.related_client_company_name}, {self.related_event_name}: {self.amount_in_euros}€'
