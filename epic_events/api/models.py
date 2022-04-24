@@ -107,7 +107,7 @@ class ClientAssignment(Assignment):
 
     @classmethod
     def find_assigned_employee_for_client(cls, client):
-        return cls.objects.filter(client=client).first()
+        return cls.objects.filter(client=client).first().employee
 
     def __str__(self):
         return f'{self.client} prospecting led by {self.employee}'
@@ -122,6 +122,24 @@ class ContractAssignment(Assignment):
 class ContractNegotiationAssignment(ContractAssignment):
     contract = models.OneToOneField(to=Contract, related_name='assigned_contract',
                                     on_delete=models.CASCADE)
+
+    def unique_error_message(self, model_class, unique_check):
+        if len(unique_check) == 1:
+            return ValidationError(
+                message=_(f"{self.contract} is already followed"
+                          f" by {self.find_assigned_employee_for_contract(self.contract)}"),
+                code="unique",
+            )
+        else:
+            return ValidationError(
+                message=_(f"{self.client} is already followed"
+                          f" by {self.find_assigned_employee_for_contract(self.contract)}"),
+                code="unique_together",
+            )
+
+    @classmethod
+    def find_assigned_employee_for_contract(cls, contract):
+        return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
         return f'{self.contract} negotiation led by {self.employee}'

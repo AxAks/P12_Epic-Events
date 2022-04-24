@@ -111,23 +111,27 @@ class ContractAssignmentSerializer(serializers.ModelSerializer):
 
 class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides parent init to add business logic
+        and return custom error messages
+        """
+        super(ContractNegotiationAssignmentSerializer, self).__init__(*args, **kwargs)
+        for validator in self.fields['contract'].validators:
+            if isinstance(validator, validators.UniqueValidator):
+                validator.message = 'This contract is already followed by an employee'
+
     def save(self) -> ContractNegotiationAssignment:
         contract_negotiation_assignment = ContractNegotiationAssignment(
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
         employee = Employee.objects.filter(id=contract_negotiation_assignment.employee.id).first()
-        already_assigned = ContractNegotiationAssignment.objects\
-            .filter(contract=contract_negotiation_assignment.contract).exists()
 
         errors = {}
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_negotiation_assignment.employee}' \
                                                  f' must be a member of the Sales Department'
-
-        if already_assigned:
-            errors['already_assigned_client'] = f'The contract {contract_negotiation_assignment.contract}' \
-                                                f' is already assigned to {contract_negotiation_assignment.employee}'
 
         if errors:
             raise serializers.ValidationError(errors)
