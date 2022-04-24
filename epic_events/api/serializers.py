@@ -105,6 +105,7 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
 class ContractAssignmentSerializer(serializers.ModelSerializer):
     pass
 
+
 class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
 
     class Meta:
@@ -126,13 +127,13 @@ class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
-        employee = Employee.objects.filter(id=contract_negotiation_assignment.employee.id).first()
 
         errors = {}
+
+        employee = Employee.objects.filter(id=contract_negotiation_assignment.employee.id).first()
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_negotiation_assignment.employee}' \
                                                  f' must be a member of the Sales Department'
-
         if errors:
             raise serializers.ValidationError(errors)
 

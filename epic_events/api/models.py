@@ -15,7 +15,7 @@ class Client(Person):
     mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
     @property
-    def is_assigned(self) -> bool:  # utile ? ou dans serializer ?
+    def is_assigned(self) -> bool:
         return ClientAssignment.objects.filter(client=self).exists()
 
     @property
