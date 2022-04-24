@@ -82,6 +82,12 @@ class Event(DatedItem):
     attendees = models.IntegerField(_('attendees'), default=0)
     notes = models.TextField(_('notes'), blank=True)
 
+    def clean(self):
+        if not self.contract.is_signed:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The related contract: {self.contract}'
+                                   f' must be signed before the event can be created'})
+
     def __str__(self):
         return f'{self.name}: {self.begin_date.date()} to {self.end_date.date()}, attendees: {self.attendees}'
 

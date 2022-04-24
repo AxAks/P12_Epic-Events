@@ -61,6 +61,7 @@ class EventSerializer(serializers.ModelSerializer):
         if not contract.is_signed:
             errors['must_be_signed'] = f'The related contract: {event.contract}' \
                                                f' must be signed before the event can be created'
+
         if errors:
             raise serializers.ValidationError(errors)
 
