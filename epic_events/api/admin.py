@@ -11,4 +11,3 @@ admin.site.register(ClientAssignment)
 admin.site.register(ContractNegotiationAssignment)
 admin.site.register(ContractSignatureAssignment)
 admin.site.register(EventAssignment)
-

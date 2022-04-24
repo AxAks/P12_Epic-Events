@@ -39,4 +39,3 @@ class CustomEmployeeAdmin(UserAdmin):
 admin.site.site_title = "Epic Events"
 admin.site.site_header = "Epic Events Administration"
 admin.site.index_title = "Home"
-

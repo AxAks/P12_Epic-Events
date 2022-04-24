@@ -1,4 +1,3 @@
-from django.core.exceptions import NON_FIELD_ERRORS
 from rest_framework import serializers, validators
 
 from api.models import Client, Contract, Event, ClientAssignment, \

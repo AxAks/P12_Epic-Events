@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
@@ -65,7 +65,7 @@ class Contract(DatedItem):
     def clean(self):
         if not self.client.is_assigned:
             raise ValidationError(
-                {NON_FIELD_ERRORS: f'The selected client {self.client}' # se limite à une seule erreur ??
+                {NON_FIELD_ERRORS: f'The selected client {self.client}'  # se limite à une seule erreur ??
                                    f' must be assigned to a sales employee first'})
 
     def __str__(self):
