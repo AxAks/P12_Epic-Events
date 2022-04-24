@@ -89,4 +89,13 @@ printf "you will now be aksed the information for the creation of a Django super
 python manage.py createsuperuser
 
 
+printf "Add Django SuperUser to all departments\n"
+printf "This requires root actions. Please enter your password when asked\n"
+sudo su postgres <<EOF
+psql $DB_NAME -c "insert into public.core_employee_groups(employee_id, group_id) values(1, 1);"
+psql $DB_NAME -c "insert into public.core_employee_groups(employee_id, group_id) values(1, 2);"
+psql $DB_NAME -c "insert into public.core_employee_groups(employee_id, group_id) values(1, 3);"
+EOF
+
+sudo su "${$current_user}"
 printf "Epic Events Installation successfully completed !\n"
