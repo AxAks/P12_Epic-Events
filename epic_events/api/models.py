@@ -117,6 +117,12 @@ class ClientAssignment(Assignment):
                 code="unique_together",
             )
 
+    def clean(self):
+        if not self.employee.is_sales:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
+                                   f' must be a member of the Sales Department'})
+
     @classmethod
     def find_assigned_employee_for_client(cls, client):
         return cls.objects.filter(client=client).first().employee
@@ -149,6 +155,12 @@ class ContractNegotiationAssignment(ContractAssignment):
                 code="unique_together",
             )
 
+    def clean(self):
+        if not self.employee.is_sales:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
+                                   f' must be a member of the Sales Department'})
+
     @classmethod
     def find_assigned_employee_for_contract(cls, contract):
         return cls.objects.filter(contract=contract).first().employee
@@ -174,6 +186,12 @@ class ContractSignatureAssignment(ContractAssignment):
                           f" by {self.find_signature_details_for_contract(self.contract)}"),
                 code="unique_together",
             )
+
+    def clean(self):
+        if not self.employee.is_sales:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
+                                   f' must be a member of the Sales Department'})
 
     @classmethod
     def find_signature_details_for_contract(cls, contract):
@@ -201,6 +219,12 @@ class ContractPaymentAssignment(ContractAssignment):
                 code="unique_together",
             )
 
+    def clean(self):
+        if not self.employee.is_sales:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
+                                   f' must be a member of the Sales Department'})
+
     @classmethod
     def find_payment_details_for_contract(cls, contract):
         return cls.objects.filter(contract=contract).first().employee
@@ -226,6 +250,12 @@ class EventAssignment(Assignment):
                           f" {self.find_assigned_employee_for_event(self.event)}"),
                 code="unique_together",
             )
+
+    def clean(self):
+        if not self.employee.is_support:
+            raise ValidationError(
+                {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
+                                   f' must be a member of the Support Department'})
 
     @classmethod
     def find_assigned_employee_for_event(cls, event):

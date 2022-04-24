@@ -90,9 +90,10 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
             employee=self.validated_data['employee'],
             client=self.validated_data['client'],
         )
-        selected_employee = Employee.objects.filter(id=client_assignment.employee.id).first()
 
         errors = {}
+        selected_employee = Employee.objects.filter(id=client_assignment.employee.id).first()
+
         if not selected_employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {client_assignment.employee}' \
                                                f' must be a member of the Sales Department'
@@ -131,8 +132,8 @@ class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
         )
 
         errors = {}
-
         employee = Employee.objects.filter(id=contract_negotiation_assignment.employee.id).first()
+
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_negotiation_assignment.employee}' \
                                                  f' must be a member of the Sales Department'
@@ -164,10 +165,11 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
+
+        errors = {}
         employee = Employee.objects.filter(id=contract_signature_assignment.employee.id).first()
         contract = Contract.objects.filter(id=contract_signature_assignment.contract.id).first()
 
-        errors = {}
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_signature_assignment.employee}'\
                                                  f' must be a member of the Sales Department'
@@ -204,10 +206,11 @@ class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
+
+        errors = {}
         employee = Employee.objects.filter(id=contract_payment_assignment.employee.id).first()
         is_signed = contract_payment_assignment.contract.is_signed
 
-        errors = {}
         if not employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {contract_payment_assignment.employee}' \
                                                f' ({contract_payment_assignment.employee.groups.first()})' \
@@ -243,9 +246,10 @@ class EventAssignmentSerializer(serializers.ModelSerializer):
             employee=self.validated_data['employee'],
             event=self.validated_data['event'],
         )
-        employee = Employee.objects.filter(id=event_assignment.employee.id).first()
 
         errors = {}
+        employee = Employee.objects.filter(id=event_assignment.employee.id).first()
+
         if not employee.is_support:
             errors['must_be_support_employee'] = f'The selected employee {event_assignment.employee}' \
                                                  f' must be a member of the Support Department'
