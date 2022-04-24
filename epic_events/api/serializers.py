@@ -1,5 +1,4 @@
-
-from rest_framework import serializers
+from rest_framework import serializers, validators
 
 from api.models import Client, Contract, Event, ClientAssignment, \
     ContractNegotiationAssignment, ContractSignatureAssignment, EventAssignment, ContractPaymentAssignment
@@ -74,31 +73,30 @@ class ClientAssignmentSerializer(serializers.ModelSerializer):
         model = ClientAssignment
         fields = ('id', 'employee', 'client')
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides parent init to add business logic
+        and return custom error messages
+        """
+        super(ClientAssignmentSerializer, self).__init__(*args, **kwargs)
+        for validator in self.fields['client'].validators:
+            if isinstance(validator, validators.UniqueValidator):
+                validator.message = 'This client is already followed by an employee'
+
     def save(self) -> ClientAssignment:
         client_assignment = ClientAssignment(
             employee=self.validated_data['employee'],
             client=self.validated_data['client'],
         )
-        employee = Employee.objects.filter(id=client_assignment.employee.id).first()
-        already_assigned = ClientAssignment.objects.filter(client=client_assignment.client).exists()
-
-        extra_kwargs = {
-            'title': {
-                'error_messages': {
-                    'unique': 'my custom error message for title'
-                }
-            }
-        }
+        selected_employee = Employee.objects.filter(id=client_assignment.employee.id).first()
 
         errors = {}
-        if not employee.is_sales:
+        if not selected_employee.is_sales:
             errors['must_be_sales_employee'] = f'The selected employee {client_assignment.employee}' \
                                                f' must be a member of the Sales Department'
-        if already_assigned:
-            errors['already_assigned_client'] = f'The client {client_assignment.client} is already assigned ' \
-                                                f'to {client_assignment.employee}'
+
         if errors:
-            raise serializers.ValidationError(self.errors)
+            raise serializers.ValidationError(errors)
 
         client_assignment.save()
         return client_assignment
