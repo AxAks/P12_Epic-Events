@@ -175,6 +175,24 @@ class ContractPaymentAssignment(ContractAssignment):
     contract = models.OneToOneField(to=Contract, related_name='payment_contract_status',
                                     on_delete=models.CASCADE)
 
+    def unique_error_message(self, model_class, unique_check):
+        if len(unique_check) == 1:
+            return ValidationError(
+                message=_(f"{self.contract} payment was already processed on {self.contract.date_created.date()}"
+                          f" by {self.find_payment_details_for_contract(self.contract)}"),
+                code="unique",
+            )
+        else:
+            return ValidationError(
+                message=_(f"{self.contract} payment was already processed on {self.contract.date_created.date()}"
+                          f" by {self.find_payment_details_for_contract(self.contract)}"),
+                code="unique_together",
+            )
+
+    @classmethod
+    def find_payment_details_for_contract(cls, contract):
+        return cls.objects.filter(contract=contract).first().employee
+
     def __str__(self):
         return f'{self.contract} payment on {self.date_created} followed by {self.employee}'
 
@@ -182,6 +200,24 @@ class ContractPaymentAssignment(ContractAssignment):
 class EventAssignment(Assignment):
     event = models.OneToOneField(to=Event, related_name='assigned_event',
                                  on_delete=models.CASCADE)
+
+    def unique_error_message(self, model_class, unique_check):
+        if len(unique_check) == 1:
+            return ValidationError(
+                message=_(f"{self.event} is already assigned to"
+                          f" {self.find_assigned_employee_for_event(self.event)}"),
+                code="unique",
+            )
+        else:
+            return ValidationError(
+                message=_(f"{self.event} payment was already processed on to"
+                          f" {self.find_assigned_employee_for_event(self.event)}"),
+                code="unique_together",
+            )
+
+    @classmethod
+    def find_assigned_employee_for_event(cls, event):
+        return cls.objects.filter(event=event).first().employee
 
     def __str__(self):
         return f'{self.event}  followed by {self.employee}'

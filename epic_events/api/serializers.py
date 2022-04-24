@@ -186,14 +186,22 @@ class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
         model = ContractPaymentAssignment
         fields = ('id', 'employee', 'contract')
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides parent init to add business logic
+        and return custom error messages
+        """
+        super(ContractPaymentAssignmentSerializer, self).__init__(*args, **kwargs)
+        for validator in self.fields['contract'].validators:
+            if isinstance(validator, validators.UniqueValidator):
+                validator.message = 'This contract has already been signed'
+
     def save(self) -> ContractPaymentAssignment:
         contract_payment_assignment = ContractPaymentAssignment(
             employee=self.validated_data['employee'],
             contract=self.validated_data['contract'],
         )
         employee = Employee.objects.filter(id=contract_payment_assignment.employee.id).first()
-        already_assigned = ContractPaymentAssignment.objects \
-            .filter(contract=contract_payment_assignment.contract).exists()
         is_signed = contract_payment_assignment.contract.is_signed
 
         errors = {}
@@ -204,12 +212,6 @@ class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
         if not is_signed:
             errors['contract_not_signed'] = f'The contract {contract_payment_assignment.contract}' \
                                             f'has to be signed before being paid'
-        if already_assigned:
-            payment_details = ContractPaymentAssignment.objects \
-                .filter(contract=contract_payment_assignment.contract).first()
-            errors['already_assigned_client'] = f'The contract {contract_payment_assignment.contract}' \
-                                                f' has already been paid on {payment_details.date_created.date()}'
-
         if errors:
             raise serializers.ValidationError(errors)
 
@@ -223,21 +225,27 @@ class EventAssignmentSerializer(serializers.ModelSerializer):
         model = EventAssignment
         fields = ('id', 'employee', 'event')
 
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides parent init to add business logic
+        and return custom error messages
+        """
+        super(EventAssignmentSerializer, self).__init__(*args, **kwargs)
+        for validator in self.fields['event'].validators:
+            if isinstance(validator, validators.UniqueValidator):
+                validator.message = 'This event is already assigned to an employee'
+
     def save(self) -> EventAssignment:
         event_assignment = EventAssignment(
             employee=self.validated_data['employee'],
             event=self.validated_data['event'],
         )
         employee = Employee.objects.filter(id=event_assignment.employee.id).first()
-        already_assigned = EventAssignment.objects.filter(event=event_assignment.event).first()
 
         errors = {}
         if not employee.is_support:
             errors['must_be_support_employee'] = f'The selected employee {event_assignment.employee}' \
                                                  f' must be a member of the Support Department'
-        if already_assigned:
-            errors['already_assigned_client'] = f'The event {event_assignment.event}' \
-                                                f' is already assigned to {event_assignment.employee}'
 
         if errors:
             raise serializers.ValidationError(errors)
