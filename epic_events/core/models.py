@@ -56,9 +56,6 @@ class Employee(AbstractUser, Person):
     def department(self):
         return self.groups.first() if self.groups.first() else 'Not affected yet'
 
-    def __str__(self):
-        return f"{self.get_full_name()} ({self.department})"
-
     @property
     def is_manager(self) -> bool:
         return self.department.id == MANAGER
@@ -75,6 +72,9 @@ class Employee(AbstractUser, Person):
     def set_is_staff(cls, employee_obj):
         Employee.objects.filter(pk=employee_obj.id).update(is_staff=True)
         return employee_obj
+
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.department})"
 
     class Meta:
         verbose_name = _('employee')
