@@ -89,7 +89,7 @@ class Event(DatedItem):
                                    f' must be signed before the event can be created'})
 
     def __str__(self):
-        return f'{self.name}: {self.begin_date.date()} to {self.end_date.date()}, attendees: {self.attendees}'
+        return f'{self.name}: {self.begin_date} to {self.end_date}, attendees: {self.attendees}'
 
 
 class Assignment(DatedItem):
@@ -166,7 +166,8 @@ class ContractNegotiationAssignment(ContractAssignment):
         return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
-        return f'{self.contract} negotiation led by {self.employee}'
+        return f'{self.contract} negotiation led by {self.employee}' \
+               f' since {self.date_updated}'
 
 
 class ContractSignatureAssignment(ContractAssignment):
@@ -176,13 +177,13 @@ class ContractSignatureAssignment(ContractAssignment):
     def unique_error_message(self, model_class, unique_check):
         if len(unique_check) == 1:
             return ValidationError(
-                message=_(f"{self.contract} was already signed on {self.contract.date_created.date()}"
+                message=_(f"{self.contract} was already signed on {self.contract.date_created}"
                           f" by {self.find_signature_details_for_contract(self.contract)}"),
                 code="unique",
             )
         else:
             return ValidationError(
-                message=_(f"{self.contract} was already signed on {self.contract.date_created.date()}"
+                message=_(f"{self.contract} was already signed on {self.contract.date_created}"
                           f" by {self.find_signature_details_for_contract(self.contract)}"),
                 code="unique_together",
             )
@@ -208,13 +209,13 @@ class ContractPaymentAssignment(ContractAssignment):
     def unique_error_message(self, model_class, unique_check):
         if len(unique_check) == 1:
             return ValidationError(
-                message=_(f"{self.contract} payment was already processed on {self.contract.date_created.date()}"
+                message=_(f"{self.contract} payment was already processed on {self.contract.date_created}"
                           f" by {self.find_payment_details_for_contract(self.contract)}"),
                 code="unique",
             )
         else:
             return ValidationError(
-                message=_(f"{self.contract} payment was already processed on {self.contract.date_created.date()}"
+                message=_(f"{self.contract} payment was already processed on {self.contract.date_created}"
                           f" by {self.find_payment_details_for_contract(self.contract)}"),
                 code="unique_together",
             )
