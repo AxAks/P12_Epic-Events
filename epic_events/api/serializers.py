@@ -44,9 +44,6 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ('id', 'name', 'contract', 'status', 'begin_date', 'end_date', 'attendees', 'notes')
 
-    begin_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    end_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-
     def save(self) -> Event:
         event = Event(
             name=self.validated_data['name'],
@@ -72,16 +69,18 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
+    exclude = ('date_created', 'date_updated')
+    read_only_fields = ('date_created', 'date_updated')
 
-    date_created = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
-    date_updated = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
+    class Meta:
+        abstract = True
 
 
 class ClientAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = ClientAssignment
-        fields = ('id', 'employee', 'client', 'date_created', 'date_updated')
+        fields = ('employee', 'client', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -114,15 +113,11 @@ class ClientAssignmentSerializer(AssignmentSerializer):
         return client_assignment
 
 
-class ContractAssignmentSerializer(AssignmentSerializer):
-    pass
-
-
-class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
+class ContractNegotiationAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = ContractNegotiationAssignment
-        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
+        fields = ('employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -154,11 +149,11 @@ class ContractNegotiationAssignmentSerializer(ContractAssignmentSerializer):
         return contract_negotiation_assignment
 
 
-class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
+class ContractSignatureAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = ContractSignatureAssignment
-        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
+        fields = ('employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -196,11 +191,11 @@ class ContractSignatureAssignmentSerializer(ContractAssignmentSerializer):
         return contract_signature_assignment
 
 
-class ContractPaymentAssignmentSerializer(ContractAssignmentSerializer):
+class ContractPaymentAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = ContractPaymentAssignment
-        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
+        fields = ('employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -241,7 +236,7 @@ class EventAssignmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventAssignment
-        fields = ('id', 'employee', 'event', 'date_created', 'date_updated')
+        fields = ('employee', 'event', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
