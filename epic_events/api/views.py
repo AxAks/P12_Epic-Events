@@ -24,6 +24,7 @@ class ClientModelViewSet(ModelViewSet):
     permission_classes = (ClientPermissions,)
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
+    filterset_fields = ['id', 'last_name', 'email']
 
     def create(self, request, *args, **kwargs):
         """
@@ -79,6 +80,8 @@ class ContractModelViewSet(ModelViewSet):
     permission_classes = (ContractPermissions,)
     serializer_class = ContractSerializer
     queryset = Contract.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'amount_in_cts', 'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
@@ -144,6 +147,8 @@ class EventModelViewSet(ModelViewSet):
     permission_classes = (EventPermissions,)
     serializer_class = EventSerializer
     queryset = Event.objects.all()
+    filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
+                        'begin_date', 'end_date']
 
     def create(self, request, *args, **kwargs):
         """
