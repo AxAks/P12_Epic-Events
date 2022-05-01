@@ -191,6 +191,9 @@ class ClientAssignmentModelViewSet(ModelViewSet):
     permission_classes = (ClientAssignmentPermissions,)
     serializer_class = ClientAssignmentSerializer
     queryset = ClientAssignment.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'employee__last_name', 'employee__email',
+                        'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
@@ -215,6 +218,9 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     permission_classes = (ContractNegotiationAssignmentPermissions,)
     serializer_class = ContractNegotiationAssignmentSerializer
     queryset = ContractNegotiationAssignment.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'employee__last_name', 'employee__email',
+                        'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
@@ -239,6 +245,9 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     permission_classes = (ContractSignatureAssignmentPermissions,)
     serializer_class = ContractSignatureAssignmentSerializer
     queryset = ContractSignatureAssignment.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'employee__last_name', 'employee__email',
+                        'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
@@ -263,6 +272,9 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     permission_classes = (ContractPaymentAssignmentPermissions,)
     serializer_class = ContractPaymentAssignmentSerializer
     queryset = ContractPaymentAssignment.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'employee__last_name', 'employee__email',
+                        'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
@@ -287,6 +299,9 @@ class EventAssignmentModelViewSet(ModelViewSet):
     permission_classes = (EventAssignmentPermissions,)
     serializer_class = EventAssignmentSerializer
     queryset = EventAssignment.objects.all()
+    filterset_fields = ['id', 'client__last_name', 'client__email',
+                        'employee__last_name', 'employee__email',
+                        'date_created', 'date_updated']
 
     def create(self, request, *args, **kwargs):
         """
