@@ -23,7 +23,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'phone', 'password', 'password2']
+        fields = ('id', 'username',
+                  'first_name', 'last_name',
+                  'email', 'phone',
+                  'password', 'password2',
+                  'date_created', 'date_updated')
+        read_only_fields = ('date_created', 'date_updated')
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self) -> Employee:

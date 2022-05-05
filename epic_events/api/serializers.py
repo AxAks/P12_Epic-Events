@@ -9,14 +9,18 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ('id', 'first_name', 'last_name', 'email', 'phone', 'company_name', 'mobile')
+        fields = ('id', 'first_name', 'last_name', 'email',
+                  'phone', 'company_name', 'mobile',
+                  'date_created', 'date_updated')
+        read_only_fields = ('date_created', 'date_updated')
 
 
 class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ('id', 'client', 'amount_in_cts', 'due_date')
+        fields = ('id', 'client', 'amount_in_cts', 'due_date', 'date_created', 'date_updated')
+        read_only_fields = ('date_created', 'date_updated')
 
     def save(self) -> Contract:
         contract = Contract(
@@ -42,7 +46,10 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ('id', 'name', 'contract', 'status', 'begin_date', 'end_date', 'attendees', 'notes')
+        fields = ('id', 'name', 'contract', 'status',
+                  'begin_date', 'end_date', 'attendees', 'notes',
+                  'date_created', 'date_updated')
+        read_only_fields = ('date_created', 'date_updated')
 
     def save(self) -> Event:
         event = Event(
