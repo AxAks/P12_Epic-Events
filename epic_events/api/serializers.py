@@ -239,7 +239,7 @@ class ContractPaymentAssignmentSerializer(AssignmentSerializer):
         return contract_payment_assignment
 
 
-class EventAssignmentSerializer(serializers.ModelSerializer):
+class EventAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = EventAssignment
