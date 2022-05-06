@@ -7,7 +7,9 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.models import Client, Contract, Event, EventAssignment, ContractNegotiationAssignment, \
     ContractSignatureAssignment, ClientAssignment, ContractPaymentAssignment
-from api.querysets import clients_queryset, contracts_queryset, events_queryset
+from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
+    contractpaymentassignments_queryset, contractsignatureassignments_queryset, contractnegotiationassignments_queryset, \
+    clientassignments_queryset
 from api.serializers import ClientSerializer, ContractSerializer, EventSerializer, ClientAssignmentSerializer, \
     ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
     ContractPaymentAssignmentSerializer
@@ -202,6 +204,9 @@ class ClientAssignmentModelViewSet(ModelViewSet):
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
 
+    def get_queryset(self):
+        return clientassignments_queryset(self.request.user)
+
     def create(self, request, *args, **kwargs):
         """
         Method to assign a Client to a Sales Employee.
@@ -224,10 +229,12 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractNegotiationAssignmentPermissions,)
     serializer_class = ContractNegotiationAssignmentSerializer
-    queryset = ContractNegotiationAssignment.objects.all()
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
+
+    def get_queryset(self):
+        return contractnegotiationassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -251,10 +258,12 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractSignatureAssignmentPermissions,)
     serializer_class = ContractSignatureAssignmentSerializer
-    queryset = ContractSignatureAssignment.objects.all()
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
+
+    def get_queryset(self):
+        return contractsignatureassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -278,10 +287,12 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractPaymentAssignmentPermissions,)
     serializer_class = ContractPaymentAssignmentSerializer
-    queryset = ContractPaymentAssignment.objects.all()
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
+
+    def get_queryset(self):
+        return contractpaymentassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
@@ -305,10 +316,12 @@ class EventAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (EventAssignmentPermissions,)
     serializer_class = EventAssignmentSerializer
-    queryset = EventAssignment.objects.all()
     filterset_fields = ['id', 'event__contract__client__last_name', 'event__contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
+
+    def get_queryset(self):
+        return eventassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """

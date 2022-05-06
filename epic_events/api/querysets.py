@@ -2,7 +2,8 @@
 Lists all queryset for view.
 Filters result contents upon type of user
 """
-from api.models import Client, Contract, Event
+from api.models import Client, Contract, Event, EventAssignment, ContractNegotiationAssignment, \
+    ContractSignatureAssignment, ContractPaymentAssignment, ClientAssignment
 
 
 def clients_queryset(employee):
@@ -24,3 +25,39 @@ def events_queryset(employee):
         return Event.objects.filter(assigned_event__employee=employee)
     else:
         return Event.objects.all()
+
+
+def clientassignments_queryset(employee):
+    if employee.is_support:
+        return ClientAssignment.objects.filter(employee=employee)
+    else:
+        return ClientAssignment.objects.all()
+
+
+def contractnegotiationassignments_queryset(employee):
+    if employee.is_support:
+        return ContractNegotiationAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)
+    else:
+        return ContractNegotiationAssignment.objects.all()
+
+
+def contractsignatureassignments_queryset(employee):
+    if employee.is_support:
+        return ContractSignatureAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)
+    else:
+        return ContractSignatureAssignment.objects.all()
+
+
+def contractpaymentassignments_queryset(employee):
+    if employee.is_support:
+        return ContractPaymentAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)
+    else:
+        return ContractPaymentAssignment.objects.all()
+
+
+def eventassignments_queryset(employee):
+    if employee.is_support:
+        return EventAssignment.objects.filter(employee=employee)
+    else:
+        return EventAssignment.objects.all()
+
