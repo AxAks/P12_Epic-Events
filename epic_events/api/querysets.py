@@ -29,7 +29,7 @@ def events_queryset(employee):
 
 def clientassignments_queryset(employee):
     if employee.is_support:
-        return ClientAssignment.objects.filter(employee=employee)
+        return ClientAssignment.objects.filter(client__contractor__event_contract__assigned_event__employee=employee)
     else:
         return ClientAssignment.objects.all()
 

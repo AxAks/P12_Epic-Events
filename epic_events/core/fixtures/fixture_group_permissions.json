@@ -1,26 +1,5 @@
 [
   {
-    "fields": {
-      "name": "Management"
-    },
-    "model": "auth.group",
-    "pk": 1
-  },
-  {
-    "fields": {
-      "name": "Sales"
-    },
-    "model": "auth.group",
-    "pk": 2
-  },
-  {
-    "fields": {
-      "name": "Support"
-    },
-    "model": "auth.group",
-    "pk": 3
-  },
-  {
     "model": "auth.group_permissions",
     "pk": 1,
     "fields": {
@@ -538,14 +517,6 @@
     "fields": {
       "group": 3,
       "permission": 28
-    }
-  },
-  {
-    "model": "auth.group_permissions",
-    "pk": 66,
-    "fields": {
-      "group": 3,
-      "permission": 32
     }
   }
 ]
