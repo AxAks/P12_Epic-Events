@@ -40,24 +40,10 @@ class ClientModelViewSet(ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        client_obj = self.queryset.filter(id=serializer.data['id']).first()
+        client_obj = self.get_queryset().filter(id=serializer.data['id']).first()
         logger.info(
             f"[{datetime.now()}] add_client {client_obj}"
             f" by {request.user}")
-        return res
-
-    def retrieve(self, request, **kwargs):
-        """
-        Returns a specific client by ID
-        """
-        client_id = kwargs['pk']
-        client_obj = self.queryset.filter(id=client_id).first()
-        self.check_object_permissions(request, client_obj)
-        serializer = self.serializer_class(client_obj)
-        res = Response(serializer.data, status=status.HTTP_200_OK)
-        logger.info(f"[{datetime.now()}] retrieve_client {client_obj}"
-                    f" by {request.user.get_full_name()}"
-                    f" {request.user.department}")
         return res
 
     def update(self, request, **kwargs):
@@ -99,7 +85,7 @@ class ContractModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         contract = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        contract_obj = self.queryset.filter(id=contract.id).first()
+        contract_obj = self.get_queryset().filter(id=contract.id).first()
         serialized_contract = self.serializer_class(contract_obj)
         res = Response(serialized_contract.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
@@ -112,7 +98,7 @@ class ContractModelViewSet(ModelViewSet):
         Returns a specific contract by ID
         """
         contract_id = kwargs['pk']
-        contract_obj = self.queryset.filter(id=contract_id).first()
+        contract_obj = self.get_queryset().filter(id=contract_id).first()
         self.check_object_permissions(request, contract_obj)
         if not contract_obj:
             res = Response({'not_found': 'the requested contract does not exist'}, status=status.HTTP_404_NOT_FOUND)
@@ -167,7 +153,7 @@ class EventModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         event = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        event_obj = self.queryset.filter(id=event.id).first()
+        event_obj = self.get_queryset().filter(id=event.id).first()
         serialized_event = self.serializer_class(event_obj)
         res = Response(serialized_event.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
@@ -214,7 +200,7 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         client_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        client_assignment_obj = self.queryset.filter(id=client_assignment.id).first()
+        client_assignment_obj = self.get_queryset().filter(id=client_assignment.id).first()
         logger.info(
             f"[{datetime.now()}] assign_client {client_assignment_obj}:"
             f" by {request.user}")
@@ -243,7 +229,7 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
         contract_negotiation_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        contract_negotiation_assignment_obj = self.queryset.filter(id=contract_negotiation_assignment.id).first()
+        contract_negotiation_assignment_obj = self.get_queryset().filter(id=contract_negotiation_assignment.id).first()
         logger.info(
             f"[{datetime.now()}] assign_contract_negotiation {contract_negotiation_assignment_obj}:"
             f" by {request.user}")
@@ -272,7 +258,7 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
         signature = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        signature_obj = self.queryset.filter(id=signature.id).first()
+        signature_obj = self.get_queryset().filter(id=signature.id).first()
         logger.info(
             f"[{datetime.now()}] signature_contract {signature_obj}:"
             f" by {request.user}")
@@ -301,7 +287,7 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
         payment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        payment_obj = self.queryset.filter(id=payment.id).first()
+        payment_obj = self.get_queryset().filter(id=payment.id).first()
         logger.info(
             f"[{datetime.now()}] payment_contract {payment_obj}:"
             f" by {request.user}")
@@ -330,7 +316,7 @@ class EventAssignmentModelViewSet(ModelViewSet):
         event_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
         res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        event_assignment_obj = self.queryset.filter(id=event_assignment.id).first()
+        event_assignment_obj = self.get_queryset().filter(id=event_assignment.id).first()
         logger.info(
             f"[{datetime.now()}] assign_event {event_assignment_obj}:"
             f" by {request.user}")
