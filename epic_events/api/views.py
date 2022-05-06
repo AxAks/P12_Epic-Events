@@ -5,8 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import Client, Contract, Event, EventAssignment, ContractNegotiationAssignment, \
-    ContractSignatureAssignment, ClientAssignment, ContractPaymentAssignment
+from api.models import Client, Contract, Event
 from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
     contractpaymentassignments_queryset, contractsignatureassignments_queryset, contractnegotiationassignments_queryset, \
     clientassignments_queryset
@@ -199,7 +198,6 @@ class ClientAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ClientAssignmentPermissions,)
     serializer_class = ClientAssignmentSerializer
-    queryset = ClientAssignment.objects.all()
     filterset_fields = ['id', 'client__last_name', 'client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
