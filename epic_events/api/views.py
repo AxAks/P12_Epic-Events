@@ -299,7 +299,7 @@ class EventAssignmentModelViewSet(ModelViewSet):
     permission_classes = (EventAssignmentPermissions,)
     serializer_class = EventAssignmentSerializer
     queryset = EventAssignment.objects.all()
-    filterset_fields = ['id', 'client__last_name', 'client__email',
+    filterset_fields = ['id', 'event__contract__client__last_name', 'event__contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
 
