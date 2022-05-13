@@ -8,7 +8,9 @@ logger = logging.getLogger('core_app')
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Departments (user Groups)
+    """
     class Meta:
         model = Group
         fields = ('id', 'name')

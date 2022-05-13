@@ -6,7 +6,9 @@ from core.models import Employee
 
 
 class ClientSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Clients
+    """
     class Meta:
         model = Client
         fields = ('id', 'first_name', 'last_name', 'email',
@@ -16,7 +18,9 @@ class ClientSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Contracts
+    """
     class Meta:
         model = Contract
         fields = ('id', 'client', 'amount_in_cts', 'due_date',
@@ -44,7 +48,9 @@ class ContractSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Event
+    """
     class Meta:
         model = Event
         fields = ('id', 'name', 'contract', 'status',
@@ -77,6 +83,9 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
+    """
+    Abstract parent class for Assignment Serializers
+    """
     exclude = ('date_created', 'date_updated')
     read_only_fields = ('date_created', 'date_updated')
 
@@ -85,7 +94,9 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
 
 class ClientAssignmentSerializer(AssignmentSerializer):
-
+    """
+    Serializer for client follow-up assignment
+    """
     class Meta:
         model = ClientAssignment
         fields = ('employee', 'client', 'date_created', 'date_updated')
@@ -122,7 +133,9 @@ class ClientAssignmentSerializer(AssignmentSerializer):
 
 
 class ContractNegotiationAssignmentSerializer(AssignmentSerializer):
-
+    """
+    Serializer for contract negotiation follow-up assignment
+    """
     class Meta:
         model = ContractNegotiationAssignment
         fields = ('employee', 'contract', 'date_created', 'date_updated')
@@ -158,7 +171,9 @@ class ContractNegotiationAssignmentSerializer(AssignmentSerializer):
 
 
 class ContractSignatureAssignmentSerializer(AssignmentSerializer):
-
+    """
+    Serializer for contract signature details registration
+    """
     class Meta:
         model = ContractSignatureAssignment
         fields = ('employee', 'contract', 'date_created', 'date_updated')
@@ -200,7 +215,9 @@ class ContractSignatureAssignmentSerializer(AssignmentSerializer):
 
 
 class ContractPaymentAssignmentSerializer(AssignmentSerializer):
-
+    """
+    Serializer for contract payment details registration
+    """
     class Meta:
         model = ContractPaymentAssignment
         fields = ('employee', 'contract', 'date_created', 'date_updated')
@@ -241,7 +258,9 @@ class ContractPaymentAssignmentSerializer(AssignmentSerializer):
 
 
 class EventAssignmentSerializer(AssignmentSerializer):
-
+    """
+    Serializer for Events
+    """
     class Meta:
         model = EventAssignment
         fields = ('id', 'employee', 'event', 'date_created', 'date_updated')
