@@ -19,7 +19,8 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ('id', 'client', 'amount_in_cts', 'due_date', 'date_created', 'date_updated')
+        fields = ('id', 'client', 'amount_in_cts', 'due_date',
+                  'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def save(self) -> Contract:
@@ -243,7 +244,7 @@ class EventAssignmentSerializer(AssignmentSerializer):
 
     class Meta:
         model = EventAssignment
-        fields = ('employee', 'event', 'date_created', 'date_updated')
+        fields = ('id', 'employee', 'event', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):

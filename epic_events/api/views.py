@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from api.filters import DatedItemFilter, EventDatesFilter
 from api.models import Client, Contract, Event
 from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
     contractpaymentassignments_queryset, contractsignatureassignments_queryset, contractnegotiationassignments_queryset, \
@@ -69,8 +70,9 @@ class ContractModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractPermissions,)
     serializer_class = ContractSerializer
-    filterset_fields = ['id', 'client__last_name', 'client__email',
-                        'amount_in_cts', 'date_created', 'date_updated']
+    filterset_class = DatedItemFilter
+    filterset_fields = ['id', 'client__last_name', 'client__email', 'amount_in_cts',
+                        'date_created', 'date_updated']
 
     def get_queryset(self):
         return contracts_queryset(self.request.user)
@@ -117,6 +119,7 @@ class EventModelViewSet(ModelViewSet):
     """
     permission_classes = (EventPermissions,)
     serializer_class = EventSerializer
+    filterset_class = EventDatesFilter
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'begin_date', 'end_date']
 
