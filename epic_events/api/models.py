@@ -211,6 +211,10 @@ class ContractNegotiationAssignment(ContractAssignment):
                                     on_delete=models.CASCADE)
 
     def unique_error_message(self, model_class, unique_check):
+        """
+        Overridden error message to unique constraint:
+        a contract can not be followed by two different employees for the same phase
+        """
         if len(unique_check) == 1:
             return ValidationError(
                 message=_(f"{self.contract} is already followed"
@@ -225,6 +229,9 @@ class ContractNegotiationAssignment(ContractAssignment):
             )
 
     def clean(self):
+        """
+        validator: can only be assigned to an employee that is from the sales department
+        """
         if not self.employee.is_sales:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
@@ -232,6 +239,9 @@ class ContractNegotiationAssignment(ContractAssignment):
 
     @classmethod
     def find_assigned_employee_for_contract(cls, contract):
+        """
+        Returns the sales employee who is in charge for the negotiation of a given contract
+        """
         return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
@@ -240,10 +250,20 @@ class ContractNegotiationAssignment(ContractAssignment):
 
 
 class ContractSignatureAssignment(ContractAssignment):
+    """
+    Model that links a given contract to a sales employee.
+    Allows to save the signature details for the contract :
+    - signature date
+    - employee who is responsible for the signature of the contract
+    """
     contract = models.OneToOneField(to=Contract, related_name='signature_contract_status',
                                     on_delete=models.CASCADE)
 
     def unique_error_message(self, model_class, unique_check):
+        """
+        Overridden error message to unique constraint:
+        a contract can only be signed once
+        """
         if len(unique_check) == 1:
             return ValidationError(
                 message=_(f"{self.contract} was already signed on {self.contract.date_created}"
@@ -258,6 +278,9 @@ class ContractSignatureAssignment(ContractAssignment):
             )
 
     def clean(self):
+        """
+        validator: the registered employee for signature must be from the sales department
+        """
         if not self.employee.is_sales:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
@@ -265,6 +288,9 @@ class ContractSignatureAssignment(ContractAssignment):
 
     @classmethod
     def find_signature_details_for_contract(cls, contract):
+        """
+        Returns the sales employee who signed a given contract
+        """
         return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
@@ -272,10 +298,20 @@ class ContractSignatureAssignment(ContractAssignment):
 
 
 class ContractPaymentAssignment(ContractAssignment):
+    """
+    Model that links a given contract to a sales employee.
+    Allows to save the payment details for the contract :
+    - payment date
+    - employee who is responsible for the payment of the contract
+    """
     contract = models.OneToOneField(to=Contract, related_name='payment_contract_status',
                                     on_delete=models.CASCADE)
 
     def unique_error_message(self, model_class, unique_check):
+        """
+        Overridden error message to unique constraint:
+        a contract can only be registered as paid once
+        """
         if len(unique_check) == 1:
             return ValidationError(
                 message=_(f"{self.contract} payment was already processed on {self.contract.date_created}"
@@ -290,6 +326,9 @@ class ContractPaymentAssignment(ContractAssignment):
             )
 
     def clean(self):
+        """
+        validator: the registered employee for signature must be from the sales department
+        """
         if not self.employee.is_sales:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
@@ -297,6 +336,9 @@ class ContractPaymentAssignment(ContractAssignment):
 
     @classmethod
     def find_payment_details_for_contract(cls, contract):
+        """
+        Returns the sales employee who registered the payment of a given contract
+        """
         return cls.objects.filter(contract=contract).first().employee
 
     def __str__(self):
@@ -304,10 +346,18 @@ class ContractPaymentAssignment(ContractAssignment):
 
 
 class EventAssignment(Assignment):
+    """
+    Model that links a given event to a support employee.
+    The employee will be the contact person for the event
+    """
     event = models.OneToOneField(to=Event, related_name='assigned_event',
                                  on_delete=models.CASCADE)
 
     def unique_error_message(self, model_class, unique_check):
+        """
+        Overridden error message to unique constraint:
+        an event can only be assigned to one employee from support department
+        """
         if len(unique_check) == 1:
             return ValidationError(
                 message=_(f"{self.event} is already assigned to"
@@ -322,6 +372,9 @@ class EventAssignment(Assignment):
             )
 
     def clean(self):
+        """
+        validator: the event can only be assigned to an employee from the support department
+        """
         if not self.employee.is_support:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
@@ -329,6 +382,9 @@ class EventAssignment(Assignment):
 
     @classmethod
     def find_assigned_employee_for_event(cls, event):
+        """
+        Returns the support employee who is assigned to a given event
+        """
         return cls.objects.filter(event=event).first().employee
 
     def __str__(self):
