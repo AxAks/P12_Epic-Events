@@ -29,6 +29,10 @@ class ClientModelViewSet(ModelViewSet):
     filterset_fields = ['id', 'last_name', 'email']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return clients_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -50,6 +54,7 @@ class ClientModelViewSet(ModelViewSet):
     def update(self, request, **kwargs):
         """
         Enables the employee to update the information of a specific contract
+        the client id is needed
         """
         client_id = kwargs['pk']
         client = Client.objects.filter(id=client_id).first()
@@ -75,6 +80,10 @@ class ContractModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return contracts_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -98,6 +107,7 @@ class ContractModelViewSet(ModelViewSet):
     def update(self, request, **kwargs):
         """
         Enables the employee to update the information of a specific contract
+        contract id must be known
         """
         contract_id = kwargs['pk']
         contract = Contract.objects.filter(id=contract_id).first()
@@ -115,7 +125,7 @@ class ContractModelViewSet(ModelViewSet):
 
 class EventModelViewSet(ModelViewSet):
     """
-    Endpoint for Clients
+    Endpoint for Events
     """
     permission_classes = (EventPermissions,)
     serializer_class = EventSerializer
@@ -124,12 +134,16 @@ class EventModelViewSet(ModelViewSet):
                         'begin_date', 'end_date']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return events_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
         Method to create an event.
-        An event is linked to a specific contract
+        An event is linked to a one and only specific contract
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -146,6 +160,7 @@ class EventModelViewSet(ModelViewSet):
     def update(self, request, **kwargs):
         """
         Enables the employee to update the information of a specific event
+        Event ID must be provided
         """
         event_id = kwargs['pk']
         event = Event.objects.filter(id=event_id).first()
@@ -162,7 +177,7 @@ class EventModelViewSet(ModelViewSet):
 
 class ClientAssignmentModelViewSet(ModelViewSet):
     """
-    Endpoint client assignments
+    Endpoint for client assignments
     """
     permission_classes = (ClientAssignmentPermissions,)
     serializer_class = ClientAssignmentSerializer
@@ -171,6 +186,10 @@ class ClientAssignmentModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return clientassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
@@ -191,7 +210,7 @@ class ClientAssignmentModelViewSet(ModelViewSet):
 
 class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     """
-    Endpoint contract assignments
+    Endpoint for contract negotation assignments
     """
     permission_classes = (ContractNegotiationAssignmentPermissions,)
     serializer_class = ContractNegotiationAssignmentSerializer
@@ -200,11 +219,15 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return contractnegotiationassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
-        Method to assign a Contract to a Sales Employee.
+        Method to assign a Contract to a Sales Employee for negotiation.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -220,7 +243,7 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
 
 class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     """
-    Endpoint contract assignments
+    Endpoint for contract signature assignment/details registration
     """
     permission_classes = (ContractSignatureAssignmentPermissions,)
     serializer_class = ContractSignatureAssignmentSerializer
@@ -229,11 +252,15 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return contractsignatureassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
-        Method to assign a Contract to a Sales Employee.
+        Method to assign/register a Contract signature details to a Sales Employee.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -249,7 +276,7 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
 
 class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     """
-    Endpoint contract assignments
+    Endpoint for contract payment details/assignments registration
     """
     permission_classes = (ContractPaymentAssignmentPermissions,)
     serializer_class = ContractPaymentAssignmentSerializer
@@ -258,11 +285,15 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return contractpaymentassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
         """
-        Method to assign a Contract to a Sales Employee.
+        Method to register a payment details for given contract and link the infos to a Sales Employee.
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -278,7 +309,7 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
 
 class EventAssignmentModelViewSet(ModelViewSet):
     """
-    Endpoint event assignments
+    Endpoint for event assignments
     """
     permission_classes = (EventAssignmentPermissions,)
     serializer_class = EventAssignmentSerializer
@@ -287,6 +318,10 @@ class EventAssignmentModelViewSet(ModelViewSet):
                         'date_created', 'date_updated']
 
     def get_queryset(self):
+        """
+        Queryset related to the view
+        takes into account the type of employee and rights given by their department)
+        """
         return eventassignments_queryset(self.request.user)
 
     def create(self, request, *args, **kwargs):
