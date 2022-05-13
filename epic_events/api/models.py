@@ -11,15 +11,26 @@ from constants import STATUSES
 
 
 class Client(Person):
+    """
+    Model for Client
+    """
     company_name = models.CharField(_('company name'), max_length=50)
     mobile = models.CharField(_('mobile phone number'), max_length=15, blank=True)
 
     @property
     def is_assigned(self) -> bool:
+        """
+        Checks whether a given client is assigned to a sales employee during conversion phase.
+        and advises about the employee who was in charge once the client is converted
+        """
         return ClientAssignment.objects.filter(client=self).exists()
 
     @property
     def is_prospect(self) -> bool:
+        """
+        Checks whether a given client is still a prospect or already a client.
+        A client is not a prospect anymore if they have at least one contract registered
+        """
         return not Contract.objects.filter(client=self).exists()
 
     def __str__(self):
@@ -27,8 +38,11 @@ class Client(Person):
 
 
 class Contract(DatedItem):
+    """
+    Model for Contract
+    """
     client = models.ForeignKey(to=Client, related_name='contractor',
-                               on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+                               on_delete=models.CASCADE)
     amount_in_cts = models.IntegerField(_('amount (in cts)'))
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
@@ -39,33 +53,56 @@ class Contract(DatedItem):
 
     @property
     def registered_negotiator(self) -> bool:
+        """
+        Checks whether a given contract is assigned to a sales employee for the negotiation phase
+        Until the contract is signed
+        """
         return ContractNegotiationAssignment.objects.filter(contract=self).exists()
 
     @property
     def is_signed(self) -> bool:
+        """
+        Checks whether a given contract is signed
+        """
         return ContractSignatureAssignment.objects.filter(contract=self).exists()
 
     @property
     def is_paid(self) -> bool:
+        """
+        Checks whether a given contract has already been paid
+        """
         return ContractPaymentAssignment.objects.filter(contract=self).exists()
 
     @property
     def related_client_company_name(self):
+        """
+        Returns the company name of the signatory client
+        """
         return self.client.company_name
 
     @property
     def related_event_name(self):
+        """
+        Returns the name of the related event
+        """
         return Event.objects.filter(contract=self).first().name \
             if Event.objects.filter(contract=self).first() else '(No related event yet)'
 
     @property
     def amount_in_euros(self) -> float:
+        """
+        Returns the contract value in Euros
+        """
         return round(self.amount_in_cts / 100, 2)
 
     def clean(self):
+        """
+        validator : checks whether the contract client is assigned to a sales employee
+        before the contract can be created
+        """
         if not self.client.is_assigned:
             raise ValidationError(
-                {NON_FIELD_ERRORS: f'The selected client {self.client}'  # se limite à une seule erreur ??
+                {NON_FIELD_ERRORS: f'The selected client {self.client}'
                                    f' must be assigned to a sales employee first'})
 
     def __str__(self):
@@ -73,8 +110,11 @@ class Contract(DatedItem):
 
 
 class Event(DatedItem):
+    """
+    Model for Events
+    """
     contract = models.OneToOneField(to=Contract, related_name='event_contract',
-                                    on_delete=models.CASCADE)  # on delete, à voir... ( passer en AnonymousUser peut etre, cf RGPD)
+                                    on_delete=models.CASCADE)
     name = models.CharField(_('event_name'), max_length=50)
     status = models.IntegerField(choices=STATUSES)
     begin_date = models.DateTimeField(_('begin date'))
@@ -83,6 +123,10 @@ class Event(DatedItem):
     notes = models.TextField(_('notes'), blank=True)
 
     def clean(self):
+        """
+        validator : checks whether the contract is signed
+        before the related event  can be created
+        """
         if not self.contract.is_signed:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The related contract: {self.contract}'
@@ -93,6 +137,9 @@ class Event(DatedItem):
 
 
 class Assignment(DatedItem):
+    """
+    Abstract Parent Class for all types of assignment
+    """
     employee = models.ForeignKey(to=Employee, on_delete=models.CASCADE)
 
     class Meta:
@@ -100,10 +147,19 @@ class Assignment(DatedItem):
 
 
 class ClientAssignment(Assignment):
+    """
+    Model that links a given client to a sales employee.
+    The employee will be in charge during prospection phase
+    to convert the prospect
+    """
     client = models.OneToOneField(to=Client, related_name='assigned_client',
                                   on_delete=models.CASCADE)
 
     def unique_error_message(self, model_class, unique_check):
+        """
+        Overridden error message to unique constraint:
+        a client can not be followed by two different employees
+        """
         if len(unique_check) == 1:
             return ValidationError(
                 message=_(f"{self.client} is already followed"
@@ -118,6 +174,9 @@ class ClientAssignment(Assignment):
             )
 
     def clean(self):
+        """
+        validator: can only be assigned to an employee that is from the sales department
+        """
         if not self.employee.is_sales:
             raise ValidationError(
                 {NON_FIELD_ERRORS: f'The selected employee {self.employee}'
@@ -125,6 +184,9 @@ class ClientAssignment(Assignment):
 
     @classmethod
     def find_assigned_employee_for_client(cls, client):
+        """
+        Returns the sales employee who is the contact for a given client
+        """
         return cls.objects.filter(client=client).first().employee
 
     def __str__(self):
@@ -132,12 +194,19 @@ class ClientAssignment(Assignment):
 
 
 class ContractAssignment(Assignment):
-
+    """
+    Abstract Parent Class for all types of contract assignment
+    """
     class Meta:
         abstract = True
 
 
 class ContractNegotiationAssignment(ContractAssignment):
+    """
+    Model that links a given contract to a sales employee.
+    The employee will be the contact person during negotiation phase
+    to sign the contract
+    """
     contract = models.OneToOneField(to=Contract, related_name='assigned_contract',
                                     on_delete=models.CASCADE)
 

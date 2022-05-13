@@ -9,6 +9,7 @@ from constants import MANAGER, SALES, SUPPORT
 class DatedItem(models.Model):
     """
     Abstract parent Class for any dated object
+    Returns creation time and last update time
     """
     date_created = models.DateTimeField(_('creation date'), auto_now_add=True)
     date_updated = models.DateTimeField(_('update date'), null=True, auto_now_add=True)
@@ -33,6 +34,9 @@ class Person(DatedItem):
     phone = models.CharField(_('phone number'), max_length=15, blank=True)
 
     def get_full_name(self):
+        """
+        Returns the person's first and last name
+        """
         return f'{self.first_name} {self.last_name}'
 
     class Meta:
@@ -56,22 +60,37 @@ class Employee(AbstractUser, Person):
 
     @property
     def department(self):
+        """
+        Returns the department of a given employee
+        """
         return self.groups.first() if self.groups.first() else 'Not affected yet'
 
     @property
     def is_manager(self) -> bool:
+        """
+        Checks whether the current user is a manager
+        """
         return self.department.id == MANAGER
 
     @property
     def is_sales(self) -> bool:
+        """
+        Checks whether the current user is from the sales department
+        """
         return self.department.id == SALES
 
     @property
     def is_support(self) -> bool:
+        """
+        Checks whether the current user is from the support department
+        """
         return self.department.id == SUPPORT
 
     @classmethod
     def set_is_staff(cls, employee_obj):
+        """
+        Enables a given user to access the administration site
+        """
         Employee.objects.filter(pk=employee_obj.id).update(is_staff=True)
         return employee_obj
 

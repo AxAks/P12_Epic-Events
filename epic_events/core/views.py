@@ -62,21 +62,10 @@ class EmployeeModelViewSet(ModelViewSet):
             return Response({'not_found_error': 'The chosen department does not exist'},
                             status=status.HTTP_404_NOT_FOUND)
 
-    def list(self, request, *args, **kwargs):
-
-        page = self.paginate_queryset(self.queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(self.queryset, many=True)
-        logger.info(
-            f"[{datetime.now()}] list_employees by {request.user}")
-        return Response(serializer.data)
-
     def update(self, request, **kwargs):
         """
-        Enables a manager to update the information of a specific employee
+        Enables a manager to update the information of a specific employee.
+        employee object ID must be known
         """
         employee_id = kwargs['pk']
         employee = Employee.objects.filter(id=employee_id).first()
@@ -92,13 +81,17 @@ class EmployeeModelViewSet(ModelViewSet):
 
 
 class PersonalInfosModelViewSet(ModelViewSet):
+    """
+    Endpoint that returns the personal infos of the logged employee
+    """
     permission_classes = (IsAuthenticated,)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
-    """
-    Endpoint that return the personal infos of the logged employee
-    """
+
     def retrieve(self, request, *args, **kwargs):
+        """
+        Returns the personal infos of the logged employee
+        """
         user = self.queryset.filter(id=request.user.id).first()
         user_department = user.department
         serializer = self.serializer_class(user)
