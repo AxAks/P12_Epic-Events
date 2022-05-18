@@ -8,7 +8,7 @@ from api.models import Client, Contract, Event, ClientAssignment, ContractNegoti
 @admin.register(Client)
 class ClientAdmin(ModelAdmin):
     list_display = ['first_name', 'last_name', 'company_name', 'email']
-    list_filter = ['last_name', 'company_name']
+    list_filter = ['last_name', 'company_name', 'email']
     search_fields = ['first_name', 'last_name', 'company_name', 'email']
     search_help_text = "Search by: name, email or company name"
 
@@ -16,7 +16,9 @@ class ClientAdmin(ModelAdmin):
 @admin.register(Contract)
 class ContractAdmin(ModelAdmin):
     list_display = ['client', 'amount_in_cts', 'date_created', 'due_date']
-    list_filter = ['client', 'date_created', 'amount_in_cts', 'due_date']
+    list_filter = ['client__last_name', 'client__company_name', 'client__email',
+                   'amount_in_cts', 'date_created',
+                   'due_date']
     search_fields = ['client__first_name', 'client__last_name', 'client__company_name', 'client__email',
                      'date_created', 'amount_in_cts', 'due_date']
     search_help_text = "Search by: client name or email or company name; contract date, amount or due date"
