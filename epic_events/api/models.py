@@ -115,7 +115,7 @@ class Event(DatedItem):
     """
     contract = models.OneToOneField(to=Contract, related_name='event_contract',
                                     on_delete=models.CASCADE)
-    name = models.CharField(_('event_name'), max_length=50)
+    name = models.CharField(_('event name'), max_length=50)
     status = models.IntegerField(choices=STATUSES)
     begin_date = models.DateTimeField(_('begin date'))
     end_date = models.DateTimeField(_('end date'))
