@@ -34,6 +34,9 @@ class CustomEmployeeAdmin(UserAdmin):
             },
         ),
     )
+    list_display = ("username", "email", "first_name", "last_name", "is_staff")
+    list_filter = ("is_staff", "is_superuser", "is_active", "groups", 'last_name', 'email')
+    search_fields = ("username", "first_name", "groups", "last_name")
 
 
 admin.site.site_title = "Epic Events"
