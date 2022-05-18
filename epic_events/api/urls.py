@@ -13,13 +13,13 @@ router.register(r'clients', ClientModelViewSet, basename='clients')
 
 router.register(r'contracts', ContractModelViewSet, basename='contracts')
 router.register(r'events', EventModelViewSet, basename='events')
-router.register(r'assign_client', ClientAssignmentModelViewSet, basename='client_assignments')
-router.register(r'assign_contract_negotiation',
+router.register(r'client_assignments', ClientAssignmentModelViewSet, basename='client_assignments')
+router.register(r'contract_negotiations',
                 ContractNegotiationAssignmentModelViewSet,
                 basename='contract_negotiation_assignments')
-router.register(r'signature_contract', ContractSignatureAssignmentModelViewSet, basename='contract_signatures')
-router.register(r'payment_contract', ContractPaymentAssignmentModelViewSet, basename='contract_payments')
-router.register(r'assign_event', EventAssignmentModelViewSet, basename='events_assignments')
+router.register(r'contract_signatures', ContractSignatureAssignmentModelViewSet, basename='contract_signatures')
+router.register(r'contract_payments', ContractPaymentAssignmentModelViewSet, basename='contract_payments')
+router.register(r'event_assignments', EventAssignmentModelViewSet, basename='event_assignments')
 
 
 urlpatterns = [
