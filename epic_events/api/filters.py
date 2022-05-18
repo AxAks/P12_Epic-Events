@@ -1,4 +1,4 @@
-from django_filters import FilterSet, IsoDateTimeFilter
+from django_filters import FilterSet
 
 from api.models import Event
 from core.models import DatedItem
