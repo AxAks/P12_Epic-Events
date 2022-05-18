@@ -26,13 +26,15 @@ class ContractAdmin(ModelAdmin):
 
 @admin.register(Event)
 class EventAdmin(ModelAdmin):
-    list_display = ['contract', 'name', 'begin_date', 'end_date', 'status']
-    list_filter = ['contract__client__last_name',
+    list_display = ['name', 'begin_date', 'end_date', 'contract', 'status']
+    list_filter = ['name',
+                   'contract__client__last_name',
                    'contract__client__company_name', 'contract__client__email',
-                   'name', 'begin_date', 'end_date', 'status']
-    search_fields = ['contract__client__first_name', 'contract__client__last_name',
+                   'begin_date', 'end_date', 'status']
+    search_fields = ['name',
+                     'contract__client__first_name', 'contract__client__last_name',
                      'contract__client__company_name', 'contract__client__email',
-                     'name', 'begin_date', 'end_date', 'status']
+                     'begin_date', 'end_date', 'status']
     search_help_text = "Search by: client name, email or company name, event name, begin or end date or status"
 
 
@@ -86,7 +88,9 @@ class ContractPaymentAssignmentAdmin(ModelAdmin):
 
 @admin.register(EventAssignment)
 class EventAssignmentAdmin(ModelAdmin):
-    list_display = ['event', 'employee', 'date_created']
+    list_display = ['event',
+                    'employee',
+                    'date_created']
     list_filter = ['event__contract__client__last_name', 'event__contract__client__company_name',
                    'event__contract__client__email',
                    'employee__first_name', 'employee__last_name', 'employee__email',

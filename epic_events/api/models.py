@@ -133,7 +133,9 @@ class Event(DatedItem):
                                    f' must be signed before the event can be created'})
 
     def __str__(self):
-        return f'{self.name}: {self.begin_date} to {self.end_date}, attendees: {self.attendees}'
+        return f'{self.name} ({self.contract.client.company_name}):'\
+               f' {self.begin_date.replace(tzinfo=None)} to {self.end_date.replace(tzinfo=None)},'\
+               f' attendees: {self.attendees}'
 
 
 class Assignment(DatedItem):
