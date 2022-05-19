@@ -10,10 +10,6 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('auth', '0015_delete_department'),
-    ]
-
     operations = [
         migrations.CreateModel(
             name='Employee',

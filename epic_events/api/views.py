@@ -75,7 +75,7 @@ class ContractModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractPermissions,)
     serializer_class = ContractSerializer
-    filterset_class = DatedItemFilter
+    #filterset_class = DatedItemFilter -> D
     # pb car ne prend plus le filtre général , seulement le DatedItemFilter, les autres filtres sont désactivés
     filterset_fields = ['id', 'client__last_name', 'client__email', 'amount_in_cts',
                         'date_created', 'date_updated']
