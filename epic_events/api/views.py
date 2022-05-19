@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import DatedItemFilter, EventDatesFilter
+from api.filters import EventDatesFilter, DatedItemFilter
 from api.models import Client, Contract, Event
 from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
     contractpaymentassignments_queryset, contractsignatureassignments_queryset, contractnegotiationassignments_queryset, \
@@ -14,7 +14,7 @@ from api.serializers import ClientSerializer, ContractSerializer, EventSerialize
     ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
     ContractPaymentAssignmentSerializer
 from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions, \
-    ClientAssignmentPermissions, ContractNegotiationAssignmentPermissions, ContractSignatureAssignmentPermissions,\
+    ClientAssignmentPermissions, ContractNegotiationAssignmentPermissions, ContractSignatureAssignmentPermissions, \
     ContractPaymentAssignmentPermissions, EventAssignmentPermissions
 
 logger = logging.getLogger('api_app')
