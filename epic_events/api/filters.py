@@ -8,6 +8,16 @@ class DatedItemFilter(FilterSet):
     """
     Class to be used to sort dated Objects by creation or update date
     """
+    @classmethod
+    def combined_dated_item_filters_and_current_filters(cls, current_filters) -> dict:
+        """
+        enables to add date filters to a class filter derived from DatedItem
+        """
+        dated_item_filters = {field: lookup for (field, lookup) in DatedItemFilter.meta.fields.items()}
+        for field, lookup  in dated_item_filters.items():
+            current_filters[field] = lookup
+        dated_models_combined_filters = current_filters
+        return dated_models_combined_filters
 
     class Meta:
         model = DatedItem
@@ -19,13 +29,16 @@ class DatedItemFilter(FilterSet):
 
 class ContractFilter(DatedItemFilter):
     """
-    Class to be used to sort dated Objects by creation or update date
+    Class to be used to sort Contracts
     """
 
     class Meta:
-
         model = Contract
-        fields = ['id', 'client__last_name', 'client__email', 'amount_in_cts']
+        current_filters = {'id': ['exact'],
+                           'client__last_name': ['exact'],
+                           'client__email': ['exact'],
+                           'amount_in_cts': ['exact']}
+        fields = DatedItemFilter.combined_dated_item_filters_and_current_filters(current_filters)
 
 
 class EventDatesFilter(FilterSet):
@@ -39,13 +52,3 @@ class EventDatesFilter(FilterSet):
             'begin_date': ['lt', 'gte'],
             'end_date': ['lt', 'gte']
         }
-
-"""
-def get_contracts_filterset_class(request):
-    params = {param for param in request.query_params}
-    if not params.keys()
-    elif 'date_created_gte' or 'date_created_lt' or 'date_updated_gte' or 'date_updated_lt' in params.keys()
-        return DatedItemFilter
-    elif 'id' or 'client__last_name' or 'client__email' or 'amount_in_cts' in params.keys()
-        return ContractFilter
-"""

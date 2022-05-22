@@ -25,13 +25,12 @@ class ContractSerializer(serializers.ModelSerializer):
         model = Contract
         fields = ('id', 'client', 'amount_in_cts', 'due_date',
                   'date_created', 'date_updated')
-        read_only_fields = ('date_created', 'date_updated')
+        read_only_fields = ('due_date', 'date_created', 'date_updated')
 
     def save(self) -> Contract:
         contract = Contract(
             client=self.validated_data['client'],
             amount_in_cts=self.validated_data['amount_in_cts'],
-            due_date=self.validated_data['due_date'],
         )
         client = Client.objects.filter(id=contract.client.id).first()
 
