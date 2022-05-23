@@ -208,8 +208,9 @@ class ClientAssignmentModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         client_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         client_assignment_obj = self.get_queryset().filter(id=client_assignment.id).first()
+        serialized_client_assignment = self.serializer_class(client_assignment_obj)
+        res = Response(serialized_client_assignment.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_client {client_assignment_obj}:"
             f" by {request.user}")
@@ -242,8 +243,9 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         contract_negotiation_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         contract_negotiation_assignment_obj = self.get_queryset().filter(id=contract_negotiation_assignment.id).first()
+        serialized_contract_negotiation_assignment = self.serializer_class(contract_negotiation_assignment_obj)
+        res = Response(serialized_contract_negotiation_assignment.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_contract_negotiation {contract_negotiation_assignment_obj}:"
             f" by {request.user}")
@@ -276,8 +278,9 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         signature = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         signature_obj = self.get_queryset().filter(id=signature.id).first()
+        serialized_signature = self.serializer_class(signature_obj)
+        res = Response(serialized_signature.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] signature_contract {signature_obj}:"
             f" by {request.user}")
@@ -310,7 +313,9 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         payment = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        payment_obj = self.get_queryset().filter(id=payment.id).first()
+        serialized_payment = self.serializer_class(payment_obj)
+        res = Response(serialized_payment.data, status=status.HTTP_201_CREATED, headers=headers)
         payment_obj = self.get_queryset().filter(id=payment.id).first()
         logger.info(
             f"[{datetime.now()}] payment_contract {payment_obj}:"
@@ -344,8 +349,9 @@ class EventAssignmentModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         event_assignment = serializer.save()
         headers = self.get_success_headers(serializer.data)
-        res = Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         event_assignment_obj = self.get_queryset().filter(id=event_assignment.id).first()
+        serialized_event_assignment = self.serializer_class(event_assignment_obj)
+        res = Response(serialized_event_assignment.data, status=status.HTTP_201_CREATED, headers=headers)
         logger.info(
             f"[{datetime.now()}] assign_event {event_assignment_obj}:"
             f" by {request.user}")
