@@ -5,17 +5,24 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.filters import ContractFilter, EventDatesFilter, DatedItemFilter
 from api.models import Client, Contract, Event
-from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
-    contractpaymentassignments_queryset, contractsignatureassignments_queryset, contractnegotiationassignments_queryset, \
-    clientassignments_queryset
-from api.serializers import ClientSerializer, ContractSerializer, EventSerializer, ClientAssignmentSerializer, \
-    ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
-    ContractPaymentAssignmentSerializer
+
 from custom_permissions.permissions import EventPermissions, ContractPermissions, ClientPermissions, \
     ClientAssignmentPermissions, ContractNegotiationAssignmentPermissions, ContractSignatureAssignmentPermissions, \
     ContractPaymentAssignmentPermissions, EventAssignmentPermissions
+
+from api.serializers import ClientSerializer, ContractSerializer, EventSerializer, ClientAssignmentSerializer, \
+    ContractNegotiationAssignmentSerializer, ContractSignatureAssignmentSerializer, EventAssignmentSerializer, \
+    ContractPaymentAssignmentSerializer
+
+from api.querysets import clients_queryset, contracts_queryset, events_queryset, eventassignments_queryset, \
+    contractpaymentassignments_queryset, contractsignatureassignments_queryset, \
+    contractnegotiationassignments_queryset, clientassignments_queryset
+
+from api.filters import ContractFilter, EventDatesFilter, ClientAssignmentFilter, \
+    ContractNegotiationAssignmentFilter, ContractSignatureAssignmentFilter, ContractPaymentAssignmentFilter, \
+    EventAssignmentFilter
+
 
 logger = logging.getLogger('api_app')
 
@@ -31,7 +38,7 @@ class ClientModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return clients_queryset(self.request.user)
 
@@ -83,7 +90,7 @@ class ContractModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return contracts_queryset(self.request.user)
 
@@ -107,7 +114,7 @@ class ContractModelViewSet(ModelViewSet):
 
     def update(self, request, **kwargs):
         """
-        Enables the employee to update the information of a specific contract
+        Enables the employee to update the information of a specific contract.
         contract id must be known
         """
         contract_id = kwargs['pk']
@@ -137,7 +144,7 @@ class EventModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return events_queryset(self.request.user)
 
@@ -160,7 +167,7 @@ class EventModelViewSet(ModelViewSet):
 
     def update(self, request, **kwargs):
         """
-        Enables the employee to update the information of a specific event
+        Enables the employee to update the information of a specific event.
         Event ID must be provided
         """
         event_id = kwargs['pk']
@@ -182,6 +189,7 @@ class ClientAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ClientAssignmentPermissions,)
     serializer_class = ClientAssignmentSerializer
+    filterset_class = ClientAssignmentFilter
     filterset_fields = ['id', 'client__last_name', 'client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
@@ -189,7 +197,7 @@ class ClientAssignmentModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return clientassignments_queryset(self.request.user)
 
@@ -215,6 +223,7 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractNegotiationAssignmentPermissions,)
     serializer_class = ContractNegotiationAssignmentSerializer
+    filterset_class = ContractNegotiationAssignmentFilter
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
@@ -222,7 +231,7 @@ class ContractNegotiationAssignmentModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return contractnegotiationassignments_queryset(self.request.user)
 
@@ -248,6 +257,7 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractSignatureAssignmentPermissions,)
     serializer_class = ContractSignatureAssignmentSerializer
+    filterset_class = ContractSignatureAssignmentFilter
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
@@ -255,7 +265,7 @@ class ContractSignatureAssignmentModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return contractsignatureassignments_queryset(self.request.user)
 
@@ -281,6 +291,7 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (ContractPaymentAssignmentPermissions,)
     serializer_class = ContractPaymentAssignmentSerializer
+    filterset_class = ContractPaymentAssignmentFilter
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
@@ -288,7 +299,7 @@ class ContractPaymentAssignmentModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return contractpaymentassignments_queryset(self.request.user)
 
@@ -314,6 +325,7 @@ class EventAssignmentModelViewSet(ModelViewSet):
     """
     permission_classes = (EventAssignmentPermissions,)
     serializer_class = EventAssignmentSerializer
+    filterset_class = EventAssignmentFilter
     filterset_fields = ['id', 'event__contract__client__last_name', 'event__contract__client__email',
                         'employee__last_name', 'employee__email',
                         'date_created', 'date_updated']
@@ -321,7 +333,7 @@ class EventAssignmentModelViewSet(ModelViewSet):
     def get_queryset(self):
         """
         Queryset related to the view
-        takes into account the type of employee and rights given by their department)
+        takes into account the type of employee and rights given by their department
         """
         return eventassignments_queryset(self.request.user)
 

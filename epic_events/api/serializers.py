@@ -98,7 +98,7 @@ class ClientAssignmentSerializer(AssignmentSerializer):
     """
     class Meta:
         model = ClientAssignment
-        fields = ('employee', 'client', 'date_created', 'date_updated')
+        fields = ('id', 'employee', 'client', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -137,7 +137,7 @@ class ContractNegotiationAssignmentSerializer(AssignmentSerializer):
     """
     class Meta:
         model = ContractNegotiationAssignment
-        fields = ('employee', 'contract', 'date_created', 'date_updated')
+        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -175,7 +175,7 @@ class ContractSignatureAssignmentSerializer(AssignmentSerializer):
     """
     class Meta:
         model = ContractSignatureAssignment
-        fields = ('employee', 'contract', 'date_created', 'date_updated')
+        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):
@@ -219,7 +219,7 @@ class ContractPaymentAssignmentSerializer(AssignmentSerializer):
     """
     class Meta:
         model = ContractPaymentAssignment
-        fields = ('employee', 'contract', 'date_created', 'date_updated')
+        fields = ('id', 'employee', 'contract', 'date_created', 'date_updated')
         read_only_fields = ('date_created', 'date_updated')
 
     def __init__(self, *args, **kwargs):

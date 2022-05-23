@@ -56,7 +56,8 @@ def contractnegotiationassignments_queryset(employee):
     Filters access upon type of employee (Manager/Sales/Support)
     """
     if employee.is_support:
-        return ContractNegotiationAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)
+        return ContractNegotiationAssignment.objects\
+            .filter(contract__event_contract__assigned_event__employee=employee)
     else:
         return ContractNegotiationAssignment.objects.all()
 
@@ -92,4 +93,3 @@ def eventassignments_queryset(employee):
         return EventAssignment.objects.filter(employee=employee)
     else:
         return EventAssignment.objects.all()
-

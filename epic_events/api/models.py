@@ -43,7 +43,7 @@ class Contract(DatedItem):
     """
     client = models.ForeignKey(to=Client, related_name='contractor',
                                on_delete=models.CASCADE)
-    amount_in_cts = models.IntegerField(_('amount (in cts)'))
+    amount_in_cts: int = models.IntegerField(_('amount (in cts)'))
     due_date = models.DateTimeField(_('due_date'), null=False, default=timezone.now)
 
     def __init__(self, *args, **kwargs):
@@ -242,7 +242,7 @@ class ContractNegotiationAssignment(ContractAssignment):
     @classmethod
     def find_assigned_employee_for_contract(cls, contract):
         """
-        Returns the sales employee who is in charge for the negotiation of a given contract
+        Returns the sales employee who is in charge of the negotiation of a given contract
         """
         return cls.objects.filter(contract=contract).first().employee
 

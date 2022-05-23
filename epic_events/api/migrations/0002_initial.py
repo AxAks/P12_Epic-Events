@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -23,17 +22,20 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventassignment',
             name='event',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_event', to='api.event'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_event',
+                                       to='api.event'),
         ),
         migrations.AddField(
             model_name='event',
             name='contract',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='event_contract', to='api.contract'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='event_contract',
+                                       to='api.contract'),
         ),
         migrations.AddField(
             model_name='contractsignatureassignment',
             name='contract',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='signature_contract_status', to='api.contract'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE,
+                                       related_name='signature_contract_status', to='api.contract'),
         ),
         migrations.AddField(
             model_name='contractsignatureassignment',
@@ -43,7 +45,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contractpaymentassignment',
             name='contract',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='payment_contract_status', to='api.contract'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE,
+                                       related_name='payment_contract_status', to='api.contract'),
         ),
         migrations.AddField(
             model_name='contractpaymentassignment',
@@ -53,7 +56,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contractnegotiationassignment',
             name='contract',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_contract', to='api.contract'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_contract',
+                                       to='api.contract'),
         ),
         migrations.AddField(
             model_name='contractnegotiationassignment',
@@ -63,12 +67,14 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contract',
             name='client',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contractor', to='api.client'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='contractor',
+                                    to='api.client'),
         ),
         migrations.AddField(
             model_name='clientassignment',
             name='client',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_client', to='api.client'),
+            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='assigned_client',
+                                       to='api.client'),
         ),
         migrations.AddField(
             model_name='clientassignment',
