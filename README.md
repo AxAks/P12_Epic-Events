@@ -115,4 +115,4 @@ Sales:
 
 Support:
 - Viewing Access to clients and contracts information limited to the events they are assigned to
-- Access to events (view and update)
+- Access to the events they are assigned to (view and update)
