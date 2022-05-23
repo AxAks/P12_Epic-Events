@@ -69,15 +69,22 @@ class EmployeeModelViewSet(ModelViewSet):
         """
         employee_id = kwargs['pk']
         employee = Employee.objects.filter(id=employee_id).first()
-        serializer = self.serializer_class(employee, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        employee_obj = serializer.update(employee, serializer.validated_data)
-        serialized_employee = self.serializer_class(employee_obj)
-        res = Response(serialized_employee.data, status=status.HTTP_204_NO_CONTENT)
-        logger.info(
-            f"[{datetime.now()}] update_employee {employee_obj}"
-            f" by {request.user}")
-        return res
+        if employee:
+            serializer = self.serializer_class(employee, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            employee_obj = serializer.update(employee, serializer.validated_data)
+            serialized_employee = self.serializer_class(employee_obj)
+            res = Response(serialized_employee.data, status=status.HTTP_204_NO_CONTENT)
+            logger.info(
+                f"[{datetime.now()}] update_employee {employee_obj}"
+                f" by {request.user}")
+            return res
+        else:
+            logger.info(
+                f"[{datetime.now()}] update_employee by {request.user}"
+                f" not_found_error: Employee with ID {employee_id} does not exist")
+            return Response({'not_found_error': f'Client with ID {employee_id} does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class PersonalInfosModelViewSet(ModelViewSet):
