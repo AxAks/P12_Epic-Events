@@ -1,10 +1,6 @@
-import logging
-
 from rest_framework import serializers
 from django.contrib.auth.models import Group
 from core.models import Employee
-
-logger = logging.getLogger('core_app')
 
 
 class DepartmentSerializer(serializers.ModelSerializer):

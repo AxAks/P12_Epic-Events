@@ -65,15 +65,22 @@ class ClientModelViewSet(ModelViewSet):
         """
         client_id = kwargs['pk']
         client = Client.objects.filter(id=client_id).first()
-        serializer = self.serializer_class(client, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        client_obj = serializer.update(client, serializer.validated_data)
-        serialized_client = self.serializer_class(client_obj)
-        res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
-        logger.info(
-            f"[{datetime.now()}] update_client {client_obj}"
-            f" by {request.user}")
-        return res
+        if client:
+            serializer = self.serializer_class(client, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            client_obj = serializer.update(client, serializer.validated_data)
+            serialized_client = self.serializer_class(client_obj)
+            res = Response(serialized_client.data, status=status.HTTP_204_NO_CONTENT)
+            logger.info(
+                f"[{datetime.now()}] update_client {client_obj}"
+                f" by {request.user}")
+            return res
+        else:
+            logger.info(
+                f"[{datetime.now()}] update_client by {request.user}"
+                f" not_found_error: Client with ID {client_id} does not exist")
+            return Response({'not_found_error': f'Client with ID {client_id} does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class ContractModelViewSet(ModelViewSet):
@@ -118,16 +125,23 @@ class ContractModelViewSet(ModelViewSet):
         """
         contract_id = kwargs['pk']
         contract = Contract.objects.filter(id=contract_id).first()
-        serializer = self.serializer_class(contract, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        contract_obj = serializer.update(contract, serializer.validated_data)
-        serialized_contract = self.serializer_class(contract_obj)
-        res = Response(serialized_contract.data, status=status.HTTP_204_NO_CONTENT)
-        logger.info(
-            f"[{datetime.now()}] update_contract {contract_obj}"
-            f" by {request.user.get_full_name()} "
-            f"{request.user.department}")
-        return res
+        if contract:
+            serializer = self.serializer_class(contract, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            contract_obj = serializer.update(contract, serializer.validated_data)
+            serialized_contract = self.serializer_class(contract_obj)
+            res = Response(serialized_contract.data, status=status.HTTP_204_NO_CONTENT)
+            logger.info(
+                f"[{datetime.now()}] update_contract {contract_obj}"
+                f" by {request.user.get_full_name()} "
+                f"{request.user.department}")
+            return res
+        else:
+            logger.info(
+                f"[{datetime.now()}] update_contract by {request.user}"
+                f" not_found_error: Contract with ID {contract_id} does not exist")
+            return Response({'not_found_error': f'Contract with ID {contract_id} does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class EventModelViewSet(ModelViewSet):
@@ -171,15 +185,22 @@ class EventModelViewSet(ModelViewSet):
         """
         event_id = kwargs['pk']
         event = Event.objects.filter(id=event_id).first()
-        serializer = self.serializer_class(event, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        event_obj = serializer.update(event, serializer.validated_data)
-        serialized_event = self.serializer_class(event_obj)
-        res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
-        logger.info(
-            f"[{datetime.now()}] update_event {event_obj}:"
-            f" by {request.user}")
-        return res
+        if event:
+            serializer = self.serializer_class(event, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            event_obj = serializer.update(event, serializer.validated_data)
+            serialized_event = self.serializer_class(event_obj)
+            res = Response(serialized_event.data, status=status.HTTP_204_NO_CONTENT)
+            logger.info(
+                f"[{datetime.now()}] update_event {event_obj}:"
+                f" by {request.user}")
+            return res
+        else:
+            logger.info(
+                f"[{datetime.now()}] update_event by {request.user}"
+                f" not_found_error: Event with ID {event_id} does not exist")
+            return Response({'not_found_error': f'Event with ID {event_id} does not exist'},
+                            status=status.HTTP_404_NOT_FOUND)
 
 
 class ClientAssignmentModelViewSet(ModelViewSet):
