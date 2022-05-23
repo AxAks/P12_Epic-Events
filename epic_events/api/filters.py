@@ -1,4 +1,5 @@
 from django_filters import FilterSet
+from django_filters.filterset import FilterSetMetaclass
 
 from api.models import Event, Contract, ClientAssignment, ContractNegotiationAssignment, ContractSignatureAssignment, \
     ContractPaymentAssignment, EventAssignment
@@ -14,7 +15,7 @@ class DatedItemFilter(FilterSet):
         """
         enables to add date filters to a class filter derived from DatedItem
         """
-        dated_item_filters = {field: lookup for (field, lookup) in DatedItemFilter.meta.fields.items()}
+        dated_item_filters = {field: lookup for (field, lookup) in DatedItemFilter.Meta.fields.items()}
         for field, lookup in dated_item_filters.items():
             current_filters[field] = lookup
         dated_models_combined_filters = current_filters
