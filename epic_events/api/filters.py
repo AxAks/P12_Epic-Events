@@ -1,5 +1,4 @@
 from django_filters import FilterSet
-from django_filters.filterset import FilterSetMetaclass
 
 from api.models import Event, Contract, ClientAssignment, ContractNegotiationAssignment, ContractSignatureAssignment, \
     ContractPaymentAssignment, EventAssignment
