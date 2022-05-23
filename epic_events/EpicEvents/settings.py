@@ -178,7 +178,6 @@ LOGOUT_REDIRECT_URL = '/admin/login'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
 )
 
 # Password validation
