@@ -68,7 +68,7 @@ class Employee(AbstractUser, Person):
         if nb_departments == 0:
             return 'Not affected yet'
         elif nb_departments == 1:
-            return self.groups.first().id
+            return self.groups.first()
         else:
             return departments
 
@@ -77,21 +77,21 @@ class Employee(AbstractUser, Person):
         """
         Checks whether the current user is a manager
         """
-        return self.department.id == MANAGER
+        return self.department.id == MANAGER if isinstance(self.department, Group) else MANAGER in self.department
 
     @property
     def is_sales(self) -> bool:
         """
         Checks whether the current user is from the sales department
         """
-        return self.department.id == SALES
+        return self.department.id == SALES if isinstance(self.department, Group) else SALES in self.department
 
     @property
     def is_support(self) -> bool:
         """
         Checks whether the current user is from the support department
         """
-        return self.department.id == SUPPORT
+        return self.department.id == SUPPORT if isinstance(self.department, Group) else SUPPORT in self.department
 
     @classmethod
     def set_is_staff(cls, employee_obj):

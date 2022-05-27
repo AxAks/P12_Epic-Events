@@ -11,7 +11,7 @@ def clients_queryset(employee):
     Returns the right queryset for the Client view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return Client.objects.filter(contractor__event_contract__assigned_event__employee=employee).distinct()
     else:
         return Client.objects.all()
@@ -22,7 +22,7 @@ def contracts_queryset(employee):
     Returns the right queryset for the Contract view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return Contract.objects.filter(event_contract__assigned_event__employee=employee).distinct()
     else:
         return Contract.objects.all()
@@ -33,7 +33,7 @@ def events_queryset(employee):
     Returns the right queryset for the Events view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return Event.objects.filter(assigned_event__employee=employee).distinct()
     else:
         return Event.objects.all()
@@ -44,7 +44,7 @@ def clientassignments_queryset(employee):
     Returns the right queryset for the Client Assignment view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return ClientAssignment.objects.filter(client__contractor__event_contract__assigned_event__employee=employee)\
             .distinct()
     else:
@@ -56,7 +56,7 @@ def contractnegotiationassignments_queryset(employee):
     Returns the right queryset for the Contract Negotiation Assignment view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return ContractNegotiationAssignment.objects\
             .filter(contract__event_contract__assigned_event__employee=employee).distinct()
     else:
@@ -68,7 +68,7 @@ def contractsignatureassignments_queryset(employee):
     Returns the right queryset for the Contract Signature Assignment view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return ContractSignatureAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)\
             .distinct()
     else:
@@ -80,7 +80,7 @@ def contractpaymentassignments_queryset(employee):
     Returns the right queryset for the Contract Payment Assignment view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return ContractPaymentAssignment.objects.filter(contract__event_contract__assigned_event__employee=employee)\
             .distinct()
     else:
@@ -92,7 +92,7 @@ def eventassignments_queryset(employee):
     Returns the right queryset for the Event Assignment view
     Filters access upon type of employee (Manager/Sales/Support)
     """
-    if employee.is_support:
+    if employee.is_support and not employee.is_sales and not employee.is_manager:
         return EventAssignment.objects.filter(employee=employee).distinct()
     else:
         return EventAssignment.objects.all()
