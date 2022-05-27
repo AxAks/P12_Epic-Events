@@ -230,7 +230,7 @@ class ContractPaymentAssignmentSerializer(AssignmentSerializer):
         super(ContractPaymentAssignmentSerializer, self).__init__(*args, **kwargs)
         for validator in self.fields['contract'].validators:
             if isinstance(validator, validators.UniqueValidator):
-                validator.message = 'This contract has already been signed'
+                validator.message = 'This contract has already been paid'
 
     def save(self) -> ContractPaymentAssignment:
         contract_payment_assignment = ContractPaymentAssignment(
