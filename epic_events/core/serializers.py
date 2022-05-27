@@ -19,15 +19,16 @@ class EmployeeSerializer(serializers.ModelSerializer):
     Serializer for Employee
     """
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    department = serializers.CharField(label='groups')
 
     class Meta:
         model = Employee
         fields = ('id', 'username',
                   'first_name', 'last_name',
-                  'email', 'groups', 'phone',
+                  'email', 'department', 'phone',
                   'password', 'password2',
                   'date_created', 'date_updated')
-        read_only_fields = ('groups', 'date_created', 'date_updated')
+        read_only_fields = ('department', 'date_created', 'date_updated')
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self) -> Employee:

@@ -63,7 +63,14 @@ class Employee(AbstractUser, Person):
         """
         Returns the department of a given employee
         """
-        return self.groups.first() if self.groups.first() else 'Not affected yet'
+        departments = [group.id for group in self.groups.all()]
+        nb_groups = len(departments)
+        if nb_groups == 0:
+            return 'Not affected yet'
+        elif nb_groups == 1:
+            return self.groups.first().id
+        else:
+            return departments
 
     @property
     def is_manager(self) -> bool:
