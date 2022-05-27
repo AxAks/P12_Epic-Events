@@ -7,6 +7,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
     """
     Serializer for Departments (user Groups)
     """
+
     class Meta:
         model = Group
         fields = ('id', 'name')
@@ -23,10 +24,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ('id', 'username',
                   'first_name', 'last_name',
-                  'email', 'phone',
+                  'email', 'groups', 'phone',
                   'password', 'password2',
                   'date_created', 'date_updated')
-        read_only_fields = ('date_created', 'date_updated')
+        read_only_fields = ('groups', 'date_created', 'date_updated')
         extra_kwargs = {'password': {'write_only': True}}
 
     def save(self) -> Employee:

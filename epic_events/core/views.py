@@ -22,7 +22,7 @@ class EmployeeModelViewSet(ModelViewSet):
     permission_classes = (EmployeePermissions,)
     serializer_class = EmployeeSerializer
     queryset = Employee.objects.all()
-    filterset_fields = ['id', 'email', 'last_name']
+    filterset_fields = ['id', 'email', 'last_name', 'groups']
 
     def create(self, request, *args, **kwargs):
         """
