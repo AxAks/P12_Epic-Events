@@ -64,10 +64,10 @@ class Employee(AbstractUser, Person):
         Returns the department of a given employee
         """
         departments = [group.id for group in self.groups.all()]
-        nb_groups = len(departments)
-        if nb_groups == 0:
+        nb_departments = len(departments)
+        if nb_departments == 0:
             return 'Not affected yet'
-        elif nb_groups == 1:
+        elif nb_departments == 1:
             return self.groups.first().id
         else:
             return departments
