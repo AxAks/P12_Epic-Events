@@ -49,10 +49,13 @@ class EventDatesFilter(FilterSet):
 
     class Meta:
         model = Event
-        fields = {
-            'begin_date': ['lt', 'gte'],
-            'end_date': ['lt', 'gte']
-        }
+
+        fields = {'id': ['exact'],
+                  'contract__client__last_name': ['exact'],
+                  'contract__client__email': ['exact'],
+                  'begin_date': ['lt', 'gte'],
+                  'end_date': ['lt', 'gte']
+                  }
 
 
 class ClientAssignmentFilter(DatedItemFilter):

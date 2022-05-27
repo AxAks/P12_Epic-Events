@@ -150,7 +150,7 @@ class EventModelViewSet(ModelViewSet):
     """
     permission_classes = (EventPermissions,)
     serializer_class = EventSerializer
-    filterset_class = EventDatesFilter
+    filterset_class = EventDatesFilter ##
     filterset_fields = ['id', 'contract__client__last_name', 'contract__client__email',
                         'begin_date', 'end_date']
 
